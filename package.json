@@ -1,0 +1,20 @@
+{
+  "name": "com.carlosbobao.signalaudiomanagerunity",
+  "version": "0.1.0",
+  "displayName": "Signal Audio Manager (Unity)",
+  "description": "Unity Sound Manager for Game Developers",
+  "keywords": [
+    "Unity",
+    "GameDev",
+    "SignalAudioManager(Unity)"
+  ],
+  "author": {
+    "name": "Carlos \"carlosbobao\" Henrique de Souza Pinto",
+    "email": "chspcontato@gmail.com",
+    "url": "carlosbobao.itch.io"
+  },
+  "unity": "6000.0",
+  "documentationUrl": "carlosbobao.itch.io/signal-audio-manager-unity",
+  "changelogUrl": "carlosbobao.itch.io/signal-audio-manager-unity/blob/main/CHANGELOG.md",
+  "licensesUrl": "carlosbobao.itch.io/signal-audio-manager-unity/blob/main/LICENSE.md"
+}
