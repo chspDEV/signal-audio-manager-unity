@@ -1,21 +1,24 @@
-MIT License
+# Signal Audio Manager - Commercial License Agreement
 
-Copyright (c) 2025 Carlos "carlosbobao" Henrique de Souza Pinto
+This is a legal agreement between you (the "Licensee") and the asset creator (the "Licensor") for the use of the Signal Audio Manager asset and all of its contents (the "Asset"). By purchasing, downloading, or using the Asset, you agree to be bound by the terms of this agreement.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Signal Audio Manager (Unity)"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## 1. Grant of License
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Upon purchase, the Licensor grants the Licensee a non-exclusive, worldwide, and perpetual license to:
+- Use and modify the Asset for personal, educational, and commercial projects.
+- Incorporate the Asset into an unlimited number of end products (such as games, applications, or videos).
+- Publicly display and perform end products that incorporate the Asset.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## 2. Restrictions
+
+The Licensee is expressly forbidden from:
+- Reselling, sub-licensing, or redistributing the Asset, or any modified version of the Asset, as a standalone product.
+- Providing the Asset to any third party, except as incorporated into an end product.
+- Claiming ownership of the Asset.
+
+## 3. No Warranty
+
+The Asset is provided "AS IS" without any warranty of any kind. The Licensor is not liable for any damages that may arise from the use of the Asset.
+
+---
+Copyright (c) 2025, carlosbobao
