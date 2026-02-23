@@ -1,3 +1,10 @@
+/* ==============================================================================
+ * CLASS: SoundManager
+ * DESCRIPTION: The core audio engine. Listens to the AudioEventChannel, manages 
+ * object pools for SFX/UI, handles music crossfading, and applies dynamic 
+ * multipliers to the base AudioEntry settings defined in the Dashboard.
+ * ==============================================================================*/
+
 using System.Collections;
 using System.Collections.Generic;
 using SignalAudioManagerUnity.Communication;
@@ -42,6 +49,7 @@ namespace SignalAudioManagerUnity.Core
             AudioEventChannel.OnPauseMusicRequested += PauseMusic;
             AudioEventChannel.OnResumeMusicRequested += ResumeMusic;
             AudioEventChannel.OnStopInstanceRequested += StopInstance;
+            AudioEventChannel.OnSetGroupVolume += HandleSetGroupVolume;
         }
 
         private void OnDisable()
@@ -51,9 +59,12 @@ namespace SignalAudioManagerUnity.Core
             AudioEventChannel.OnPauseMusicRequested -= PauseMusic;
             AudioEventChannel.OnResumeMusicRequested -= ResumeMusic;
             AudioEventChannel.OnStopInstanceRequested -= StopInstance;
+            AudioEventChannel.OnSetGroupVolume -= HandleSetGroupVolume;
         }
 
-        // Initialization and Setup
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
         private void Initialize()
         {
             if (_config == null) return;
@@ -125,7 +136,9 @@ namespace SignalAudioManagerUnity.Core
             pool.Enqueue(pooledSource);
         }
 
-        // Event Handlers
+        // ==========================================
+        // EVENT ROUTING
+        // ==========================================
         private void PlayAudio(AudioClipConfig config)
         {
             if (config == null) return;
@@ -137,22 +150,29 @@ namespace SignalAudioManagerUnity.Core
             }
         }
 
-        // Playback Logic
+        // ==========================================
+        // PLAYBACK LOGIC
+        // ==========================================
         private void PlayMusic(AudioClipConfig config)
         {
             if (!_musicClips.TryGetValue(config.AudioID.ToLowerInvariant(), out AudioEntry entry)) return;
-            AudioClip clipToPlay = entry.audioClips[0];
+            
+            AudioClip clipToPlay = entry.GetRandomClip();
+            if (clipToPlay == null) return;
+
             var musicSource = GetAvailableMusicSource();
-            StartCoroutine(CrossfadeMusic(musicSource, clipToPlay, config));
+            StartCoroutine(CrossfadeMusic(musicSource, clipToPlay, config, entry));
         }
 
         private void PlaySFX(AudioClipConfig config)
         {
-            if (!_sfxClips.TryGetValue(config.AudioID.ToLowerInvariant(), out AudioEntry entry) || entry.audioClips.Count == 0) return;
+            if (!_sfxClips.TryGetValue(config.AudioID.ToLowerInvariant(), out AudioEntry entry)) return;
 
-            AudioClip clipToPlay = entry.audioClips[Random.Range(0, entry.audioClips.Count)];
-            float volume = Random.Range(entry.minVolume, entry.maxVolume) * config.VolumeScale;
-            float pitch = Random.Range(entry.minPitch, entry.maxPitch) * config.Pitch;
+            AudioClip clipToPlay = entry.GetRandomClip();
+            if (clipToPlay == null) return;
+            
+            float finalVolume = entry.GetRandomVolume() * config.VolumeMultiplier;
+            float finalPitch = entry.GetRandomPitch() * config.PitchMultiplier;
 
             var pooledSource = GetAvailableSourceFromPool(_sfxPool);
 
@@ -167,7 +187,15 @@ namespace SignalAudioManagerUnity.Core
                 pooledSource.transform.position = config.Position;
             }
 
-            pooledSource.Play(clipToPlay, volume, pitch, config.Loop, false);
+
+            if (config.Delay > 0f)
+            {
+                StartCoroutine(PlayPooledDelayed(pooledSource, clipToPlay, finalVolume, finalPitch, config.Loop, false, config.Delay));
+            }
+            else
+            {
+                pooledSource.Play(clipToPlay, finalVolume, finalPitch, config.Loop, false);
+            }
 
             if (config.Loop && config.InstanceID != 0)
             {
@@ -177,12 +205,34 @@ namespace SignalAudioManagerUnity.Core
 
         private void PlayUISound(AudioClipConfig config)
         {
-            if (!_sfxClips.TryGetValue(config.AudioID.ToLowerInvariant(), out AudioEntry entry) || entry.audioClips.Count == 0) return;
+            if (!_sfxClips.TryGetValue(config.AudioID.ToLowerInvariant(), out AudioEntry entry)) return;
 
-            AudioClip clipToPlay = entry.audioClips[0];
+            AudioClip clipToPlay = entry.GetRandomClip();
+            if (clipToPlay == null) return;
+
+            float finalVolume = entry.GetRandomVolume() * config.VolumeMultiplier;
+            float finalPitch = entry.GetRandomPitch() * config.PitchMultiplier;
+
             var pooledSource = GetAvailableSourceFromPool(_uiPool);
             pooledSource.transform.SetParent(_audioHost.transform);
-            pooledSource.Play(clipToPlay, config.VolumeScale, config.Pitch, false, true);
+
+            if (config.Delay > 0f)
+            {
+                StartCoroutine(PlayPooledDelayed(pooledSource, clipToPlay, finalVolume, finalPitch, false, true, config.Delay));
+            }
+            else
+            {
+                pooledSource.Play(clipToPlay, finalVolume, finalPitch, false, true);
+            }
+        }
+
+        private IEnumerator PlayPooledDelayed(PooledAudioSource source, AudioClip clip, float vol, float pitch, bool loop, bool isUI, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if (source != null)
+            {
+                source.Play(clip, vol, pitch, loop, isUI);
+            }
         }
 
         private void StopInstance(long instanceId)
@@ -194,12 +244,13 @@ namespace SignalAudioManagerUnity.Core
             }
         }
 
-        // Utility and Control Methods (Pooling, Fading, Volume)
+        // ==========================================
+        // UTILITY, FADING & POOLING
+        // ==========================================
         private PooledAudioSource GetAvailableSourceFromPool(Queue<PooledAudioSource> pool)
         {
             if (pool.Count == 0)
             {
-                // Dynamically create more if pool runs out.
                 string group = pool == _sfxPool ? "SFX" : "UI";
                 CreatePoolableSource(pool, group);
             }
@@ -213,20 +264,34 @@ namespace SignalAudioManagerUnity.Core
             pool.Enqueue(source);
         }
 
-        private IEnumerator CrossfadeMusic(AudioSource newSource, AudioClip newClip, AudioClipConfig config)
+        private IEnumerator CrossfadeMusic(AudioSource newSource, AudioClip newClip, AudioClipConfig config, AudioEntry entry)
         {
             if (_activeMusicSource != null && _activeMusicSource.isPlaying)
             {
                 yield return StartCoroutine(FadeSource(_activeMusicSource, 0f, config.FadeDuration));
                 _activeMusicSource.Stop();
             }
+
+            float finalVolume = entry.GetRandomVolume() * config.VolumeMultiplier;
+            float finalPitch = entry.GetRandomPitch() * config.PitchMultiplier;
+
             _activeMusicSource = newSource;
             _activeMusicSource.clip = newClip;
             _activeMusicSource.volume = 0;
-            _activeMusicSource.pitch = config.Pitch;
+            _activeMusicSource.pitch = finalPitch;
             _activeMusicSource.loop = config.Loop;
-            _activeMusicSource.Play();
-            yield return StartCoroutine(FadeSource(_activeMusicSource, config.VolumeScale, config.FadeDuration));
+
+            if (config.Delay > 0f)
+            {
+                _activeMusicSource.PlayDelayed(config.Delay);
+                yield return new WaitForSeconds(config.Delay);
+            }
+            else
+            {
+                _activeMusicSource.Play();
+            }
+            
+            yield return StartCoroutine(FadeSource(_activeMusicSource, finalVolume, config.FadeDuration));
         }
 
         private IEnumerator FadeSource(AudioSource source, float targetVolume, float duration)
@@ -257,6 +322,9 @@ namespace SignalAudioManagerUnity.Core
             return _musicSources[0];
         }
 
+        // ==========================================
+        // GLOBAL CONTROLS & MIXER
+        // ==========================================
         public void StopAllMusic()
         {
             foreach (var source in _musicSources)
@@ -282,6 +350,17 @@ namespace SignalAudioManagerUnity.Core
             SetMusicVolume(PlayerPrefs.GetFloat(_config.musicVolumeParam, 1f));
             SetSFXVolume(PlayerPrefs.GetFloat(_config.sfxVolumeParam, 1f));
             SetUIVolume(PlayerPrefs.GetFloat(_config.uiVolumeParam, 1f));
+        }
+        
+        private void HandleSetGroupVolume(AudioCategory category, float normalizedVolume)
+        {
+            switch (category)
+            {
+                case AudioCategory.Master: SetMasterVolume(normalizedVolume); break;
+                case AudioCategory.Music: SetMusicVolume(normalizedVolume); break;
+                case AudioCategory.SFX: SetSFXVolume(normalizedVolume); break;
+                case AudioCategory.UI: SetUIVolume(normalizedVolume); break;
+            }
         }
 
         public void SetMasterVolume(float volume) => SetVolume(_config.masterVolumeParam, volume);
