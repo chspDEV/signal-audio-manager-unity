@@ -187,6 +187,7 @@ namespace SignalAudioManagerUnity.Core
                 pooledSource.transform.position = config.Position;
             }
 
+            pooledSource.GetComponent<AudioSource>().spatialBlend = (config.TargetTransform != null || config.Position != Vector3.zero) ? 1f : 0f;
 
             if (config.Delay > 0f)
             {
