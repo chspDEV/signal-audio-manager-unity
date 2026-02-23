@@ -44,6 +44,8 @@ namespace SignalAudioManagerUnity.Core
 
         private void OnEnable()
         {
+            if (Instance != null && Instance != this) return;
+
             AudioEventChannel.OnAudioPlayRequested += PlayAudio;
             AudioEventChannel.OnStopMusicRequested += StopAllMusic;
             AudioEventChannel.OnPauseMusicRequested += PauseMusic;
@@ -54,6 +56,8 @@ namespace SignalAudioManagerUnity.Core
 
         private void OnDisable()
         {
+            if (Instance != null && Instance != this) return;
+
             AudioEventChannel.OnAudioPlayRequested -= PlayAudio;
             AudioEventChannel.OnStopMusicRequested -= StopAllMusic;
             AudioEventChannel.OnPauseMusicRequested -= PauseMusic;

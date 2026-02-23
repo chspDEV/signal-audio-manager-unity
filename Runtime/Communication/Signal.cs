@@ -17,6 +17,7 @@ namespace SignalAudioManagerUnity.Communication
     public static class Signal
     {
         private static long _nextInstanceId = 1;
+        private static SoundManager _cachedManager;
         
         /// <summary>
         /// Checks if the SoundManager exists in the current scene. 
@@ -24,25 +25,27 @@ namespace SignalAudioManagerUnity.Communication
         /// </summary>
         private static void EnsureManagerExists()
         {
-            SoundManager existingManager = UnityEngine.Object.FindFirstObjectByType<SoundManager>();
-            
-            if (existingManager == null)
-            {
-                GameObject managerPrefab = Resources.Load<GameObject>("Audio_Managers");
+            if (_cachedManager) return;
+
+            _cachedManager = UnityEngine.Object.FindFirstObjectByType<SoundManager>();
+
+            if (_cachedManager) return;
+            var managerPrefab = Resources.Load<GameObject>("Audio_Managers");
                 
-                if (managerPrefab != null)
-                {
-                    GameObject instance = UnityEngine.Object.Instantiate(managerPrefab);
-                    instance.name = "Audio_Managers (Auto-Loaded)";
+            if (managerPrefab)
+            {
+                GameObject instance = UnityEngine.Object.Instantiate(managerPrefab);
+                instance.name = "Audio_Managers (Auto-Loaded)";
                     
-                    UnityEngine.Object.DontDestroyOnLoad(instance);
+                UnityEngine.Object.DontDestroyOnLoad(instance);
                     
-                    Debug.Log("[Signal Audio] Audio Manager auto-instantiated successfully!");
-                }
-                else
-                {
-                    Debug.LogError("[Signal Audio] CRITICAL ERROR: 'Audio_Managers' prefab not found in Resources folder. Please open the Signal Dashboard and run the 1-Click Setup.");
-                }
+                _cachedManager = instance.GetComponent<SoundManager>();
+                    
+                Debug.Log("[Signal Audio] Audio Manager auto-instantiated successfully!");
+            }
+            else
+            {
+                Debug.LogError("[Signal Audio] CRITICAL ERROR: 'Audio_Managers' prefab not found in Resources folder. Please open the Signal Dashboard and run the 1-Click Setup.");
             }
         }
 
