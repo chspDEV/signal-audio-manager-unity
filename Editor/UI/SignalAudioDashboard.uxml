@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
+    <ui:VisualElement name="welcome-screen" class="welcome-screen">
+        <ui:Label text="Welcome to Signal Audio Manager" class="welcome-title" />
+        <ui:Label text="No audio configuration found in this project." class="welcome-subtitle" />
+        <ui:Label text="Click the button below to automatically generate the necessary folders, audio mixers, prefabs, and configuration files at:" class="welcome-desc" />
+        <ui:Label text="Assets/Resenha Studio/SignalAudio_Setup/" class="welcome-path" />
+        
+        <ui:Button name="btn-initial-setup" text="🚀 Generate Initial Setup" class="setup-btn" />
+    </ui:VisualElement>
+
+    <ui:VisualElement name="dashboard-container" class="dashboard-container">
+        <ui:VisualElement name="sidebar" class="sidebar">
+            <ui:Label text="Signal Audio" class="sidebar-title" />
+            <ui:Button name="tab-global" text="⚙️ Global Settings" class="sidebar-btn sidebar-btn-active" />
+            <ui:Button name="tab-music" text="🎵 Music Library" class="sidebar-btn" />
+            <ui:Button name="tab-sfx" text="🔊 SFX / UI Library" class="sidebar-btn" />
+            <ui:Button name="tab-tools" text="📁 Import Tools" class="sidebar-btn" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="main-content" class="main-content">
+            <ui:Label text="Dashboard initialized. Awaiting data binding." class="placeholder-text" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+
+</ui:UXML>

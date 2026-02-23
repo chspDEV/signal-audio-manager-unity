@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace SignalAudioManager
+namespace SignalAudioManagerUnity.Core
 {
 
     [RequireComponent(typeof(AudioSource))]

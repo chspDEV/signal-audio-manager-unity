@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ui:VisualElement class="library-container">
+        <ui:Label name="library-title" text="Audio Library" class="section-header" />
+        <ui:ListView name="audio-list-view" class="audio-list-view" virtualization-method="DynamicHeight" show-add-remove-footer="true" reorderable="true" />
+    </ui:VisualElement>
+</ui:UXML>

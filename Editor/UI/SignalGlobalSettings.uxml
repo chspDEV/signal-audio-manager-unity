@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
+>
+    <ui:ScrollView class="tab-scroll-view">
+        
+        <ui:VisualElement class="section-container">
+            <ui:Label text="Audio Mixer Configuration" class="section-header" />
+            <uie:PropertyField binding-path="audioMixer" label="Main Audio Mixer" />
+            <uie:PropertyField binding-path="masterVolumeParam" label="Master Volume Param" />
+            <uie:PropertyField binding-path="musicVolumeParam" label="Music Volume Param" />
+            <uie:PropertyField binding-path="sfxVolumeParam" label="SFX Volume Param" />
+            <uie:PropertyField binding-path="uiVolumeParam" label="UI Volume Param" />
+        </ui:VisualElement>
+
+        <ui:VisualElement class="section-container">
+            <ui:Label text="Asset References" class="section-header" />
+            <uie:PropertyField binding-path="sfxPrefab" label="SFX Audio Source Prefab" />
+        </ui:VisualElement>
+
+        <ui:VisualElement class="section-container">
+            <ui:Label text="General Settings" class="section-header" />
+            <uie:PropertyField binding-path="maxSimultaneousMusic" label="Max Simultaneous Music" />
+            <uie:PropertyField binding-path="sfxPoolSize" label="SFX Pool Size" />
+        </ui:VisualElement>
+
+    </ui:ScrollView>
+</ui:UXML>

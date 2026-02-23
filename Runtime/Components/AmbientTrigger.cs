@@ -1,6 +1,8 @@
+using SignalAudioManagerUnity.Core;
+using SignalAudioManagerUnity.Data;
 using UnityEngine;
 
-namespace SignalAudioManager
+namespace SignalAudioManagerUnity.Components
 {
     [RequireComponent(typeof(Collider))]
     public class AmbientTrigger : MonoBehaviour

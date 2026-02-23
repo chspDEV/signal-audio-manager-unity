@@ -1,12 +1,13 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using SignalAudioManagerUnity.Data;
+using UnityEditor;
+using UnityEngine;
 
-namespace SignalAudioManager
+namespace SignalAudioManagerUnity.Editor
 {
     [CustomEditor(typeof(SoundManagerSO))]
-    public class SoundManagerSOEditor : Editor
+    public class SoundManagerSOEditor : UnityEditor.Editor
     {
         private SerializedProperty audioMixerProp;
         private SerializedProperty masterVolumeParamProp;

@@ -1,6 +1,7 @@
+using SignalAudioManagerUnity.Communication;
 using UnityEngine;
 
-namespace SignalAudioManager
+namespace SignalAudioManagerUnity.Components
 {
     public class PlaySFX : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace SignalAudioManager
+namespace SignalAudioManagerUnity.Data
 {
     [System.Serializable]
     public class AudioEntry

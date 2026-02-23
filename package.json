@@ -1,6 +1,6 @@
 {
-  "name": "com.carlosbobao.signalaudiomanagerunity",
-  "version": "0.1.0",
+  "name": "com.resenhastudio.signalaudiomanagerunity",
+  "version": "1.0.0",
   "displayName": "Signal Audio Manager (Unity)",
   "description": "Unity Sound Manager for Game Developers",
   "keywords": [
@@ -12,8 +12,8 @@
   ],
   "author": {
     "name": "Carlos \"carlosbobao\" Henrique de Souza Pinto",
-    "email": "chspcontato@gmail.com",
-    "url": "https://carlosbobao.itch.io"
+    "url": "https://carlosbobao.itch.io",
+    "email": "chspcontato@gmail.com"
   },
   "unity": "6000.0"
 }
