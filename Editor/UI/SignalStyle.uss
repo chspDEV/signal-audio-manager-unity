@@ -1,0 +1,295 @@
+/* ==============================================================================
+ * SIGNAL AUDIO MANAGER - MASTER STYLE SHEET (UI Toolkit)
+ * ==============================================================================*/
+
+/* --- 1. MAIN --- */
+.dashboard-container {
+    flex-grow: 1;
+    flex-direction: row; 
+    background-color: var(--unity-colors-window-background);
+}
+
+.sidebar {
+    width: 220px; 
+    min-width: 220px;
+    background-color: rgba(0, 0, 0, 0.15); 
+    border-right-width: 1px;
+    border-right-color: var(--unity-colors-app_toolbar-border);
+    padding: 15px 10px;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px; 
+}
+
+/* --- 2. TYPOGRAPHY & HEADERS --- */
+.sidebar-title {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: #9d72f5; 
+    -unity-text-align: middle-center;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+.section-header {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: var(--unity-colors-label-text);
+    margin-bottom: 15px;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--unity-colors-app_toolbar-border);
+    padding-bottom: 5px;
+}
+
+/* --- 3. SIDE BAR --- */
+.sidebar-btn {
+    height: 40px;
+    -unity-text-align: middle-left;
+    padding-left: 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.03); 
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.02); 
+    border-left-width: 4px;
+    border-left-color: transparent;
+    font-size: 13px;
+    color: var(--unity-colors-label-text);
+    transition-duration: 0.2s;
+    flex-direction: row;
+    align-items: center;
+}
+
+.sidebar-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08); 
+}
+
+.sidebar-btn-active {
+    background-color: #3b2363; 
+    border-color: #4a2b7a;
+    border-left-color: #9d72f5; 
+    color: #ffffff;
+    -unity-font-style: bold;
+}
+
+.sidebar-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    -unity-background-scale-mode: scale-to-fit;
+    -unity-background-image-tint-color: var(--unity-colors-label-text);
+    opacity: 0.7;
+    transition-duration: 0.2s;
+}
+
+.sidebar-btn:hover .sidebar-icon {
+    opacity: 1;
+}
+
+.sidebar-btn-active .sidebar-icon {
+    -unity-background-image-tint-color: #ffffff;
+    opacity: 1;
+}
+
+/* --- 4. CARDS & CONTAINERS (Global Settings, Import Tools, Audio Lines) --- */
+.section-container {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-width: 1px;
+    border-color: var(--unity-colors-app_toolbar-border);
+}
+
+.audio-entry-card {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 5px 2px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.audio-entry-header {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.audio-id-field {
+    flex-grow: 1;
+    margin-right: 15px;
+    -unity-font-style: bold;
+}
+
+.sliders-container {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top-width: 1px;
+    border-top-color: rgba(255, 255, 255, 0.05);
+}
+
+/* --- 5. ACTIONS BUTTONS   (Play, Stop, Import) --- */
+.icon-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    -unity-font-style: bold;
+    border-width: 0;
+    transition-duration: 0.15s;
+}
+
+.play-btn {
+    background-color: #5c35a6;
+    color: white;
+}
+
+.play-btn:hover {
+    background-color: #7245c7;
+    scale: 1.05; 
+}
+
+.stop-btn {
+    background-color: #8E3030;
+    color: white;
+    margin-left: 5px;
+}
+
+.stop-btn:hover {
+    background-color: #B33D3D;
+    scale: 1.05;
+}
+
+.setup-btn {
+    font-size: 14px;
+    -unity-font-style: bold;
+    background-color: #5c35a6;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border-width: 0;
+    transition-duration: 0.2s;
+}
+
+.setup-btn:hover {
+    background-color: #7245c7;
+}
+
+/* --- 6. LIST VIEW & HELP --- */
+.library-container {
+    flex-grow: 1;
+    display: flex;
+}
+
+.audio-list-view {
+    flex-grow: 1;
+    margin-top: 10px;
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: var(--unity-colors-app_toolbar-border);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.help-text {
+    font-size: 13px;
+    color: var(--unity-colors-label-text);
+    white-space: normal;
+    margin-bottom: 12px;
+    min-height: 20px;
+}
+
+/* --- 7. WELCOME SCREEN --- */
+.welcome-screen {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--unity-colors-window-background);
+    padding: 40px;
+}
+
+.welcome-title {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: var(--unity-colors-label-text);
+    margin-bottom: 10px;
+}
+
+.welcome-subtitle {
+    font-size: 16px;
+    color: var(--unity-colors-warning-text);
+    margin-bottom: 20px;
+}
+
+.welcome-desc {
+    font-size: 14px;
+    color: var(--unity-colors-label-text);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    width: 80%;
+}
+
+.welcome-path {
+    font-size: 13px;
+    -unity-font-style: italic;
+    color: #4CAF50;
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+.audio-id-field {
+    width: 50%;
+    min-width: 150px;
+    max-width: 250px;
+    margin-right: 15px;
+    flex-shrink: 1;
+    -unity-font-style: bold;
+}
+
+.error-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    -unity-background-image-tint-color: #ff4444; 
+    display: none; 
+}
+
+.has-error .error-icon {
+    display: flex;
+}
+
+.has-error .audio-id-field {
+    color: #ff4444;
+}
+
+/* ==============================================================================
+ * 8. RESPONSIVITY (COLLAPSED MODE)
+ * ==============================================================================*/
+
+.collapsed-mode .sidebar {
+    width: 60px;
+    min-width: 60px;
+    padding: 15px 5px;
+    align-items: center;
+}
+
+.collapsed-mode .sidebar-title {
+    display: none;
+}
+
+.collapsed-mode .sidebar-btn {
+    padding-left: 0;
+    justify-content: center;
+    width: 100%;
+}
+
+.collapsed-mode .sidebar-btn Label {
+    display: none;
+}
+
+.collapsed-mode .sidebar-icon {
+    margin-right: 0;
+    width: 22px;
+    height: 22px;
+}

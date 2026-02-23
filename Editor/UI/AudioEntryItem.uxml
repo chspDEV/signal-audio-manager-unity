@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ui:VisualElement class="audio-entry-card">
+        
+        <ui:VisualElement class="audio-entry-header">
+            <ui:TextField name="audio-id-field" label="Audio ID:" class="audio-id-field" />
+            <ui:Button name="btn-play" text="►" class="icon-btn play-btn" />
+            <ui:Button name="btn-stop" text="■" class="icon-btn stop-btn" />
+        </ui:VisualElement>
+        
+        <ui:Foldout text="Details &amp; Variations" class="audio-entry-foldout">
+            <uie:PropertyField name="audio-clips-field" label="Audio Clips" />
+            
+            <ui:VisualElement class="sliders-container">
+                <uie:PropertyField name="min-vol-field" label="Min Volume" />
+                <uie:PropertyField name="max-vol-field" label="Max Volume" />
+                <uie:PropertyField name="min-pitch-field" label="Min Pitch" />
+                <uie:PropertyField name="max-pitch-field" label="Max Pitch" />
+            </ui:VisualElement>
+        </ui:Foldout>
+        
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,9 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
-using System.Collections.Generic;
 
-
-namespace SignalAudioManager
+namespace SignalAudioManagerUnity.Data
 {
     [CreateAssetMenu(fileName = "SoundManagerSO", menuName = "Signal Audio Manager/Configuration")]
     public class SoundManagerSO : ScriptableObject

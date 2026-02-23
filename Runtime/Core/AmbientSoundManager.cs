@@ -1,9 +1,10 @@
-
 using System.Collections;
 using System.Collections.Generic;
+using SignalAudioManagerUnity.Communication;
+using SignalAudioManagerUnity.Data;
 using UnityEngine;
 
-namespace SignalAudioManager
+namespace SignalAudioManagerUnity.Core
 {
     public class AmbientSoundManager : MonoBehaviour
     {
