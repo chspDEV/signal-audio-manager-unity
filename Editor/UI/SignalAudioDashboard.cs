@@ -632,24 +632,18 @@ namespace SignalAudioManagerUnity.Editor.UI
         private void RunInitialSetup(string selectedPath)
         {
             string targetBaseFolder = !string.IsNullOrEmpty(selectedPath) ? selectedPath : "Assets/Resenha Studio";
-
-            if (targetBaseFolder == "Assets/Resenha Studio" && !AssetDatabase.IsValidFolder(targetBaseFolder))
-            {
-                AssetDatabase.CreateFolder("Assets", "Resenha Studio");
-            }
-
             string targetFolder = $"{targetBaseFolder}/SignalAudio_Setup";
             string resourcesFolder = $"{targetFolder}/Resources";
-
-            if (!AssetDatabase.IsValidFolder(targetFolder))
-            {
-                AssetDatabase.CreateFolder(targetBaseFolder, "SignalAudio_Setup");
-            }
-
-            if (!AssetDatabase.IsValidFolder(resourcesFolder))
-            {
-                AssetDatabase.CreateFolder(targetFolder, "Resources");
-            }
+            
+            string absoluteBasePath = Path.Combine(Application.dataPath, targetBaseFolder.Substring(7));
+            string absoluteTargetFolder = Path.Combine(Application.dataPath, targetFolder.Substring(7));
+            string absoluteResourcesFolder = Path.Combine(Application.dataPath, resourcesFolder.Substring(7));
+            
+            if (!Directory.Exists(absoluteBasePath)) Directory.CreateDirectory(absoluteBasePath);
+            if (!Directory.Exists(absoluteTargetFolder)) Directory.CreateDirectory(absoluteTargetFolder);
+            if (!Directory.Exists(absoluteResourcesFolder)) Directory.CreateDirectory(absoluteResourcesFolder);
+            
+            AssetDatabase.Refresh();
 
             string mixerGuid = FindTemplateGuid("SignalAudioMixer", "t:AudioMixerController");
             string sfxPrefabGuid = FindTemplateGuid("SFX_Prefab", "t:Prefab");
