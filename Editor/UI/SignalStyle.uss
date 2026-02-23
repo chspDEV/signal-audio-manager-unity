@@ -197,7 +197,7 @@
     color: var(--unity-colors-label-text);
     white-space: normal;
     margin-bottom: 12px;
-    line-height: 20px;
+    min-height: 20px;
 }
 
 /* --- 7. WELCOME SCREEN --- */
@@ -236,6 +236,31 @@
     color: #4CAF50;
     margin-top: 5px;
     margin-bottom: 30px;
+}
+
+.audio-id-field {
+    width: 50%;
+    min-width: 150px;
+    max-width: 250px;
+    margin-right: 15px;
+    flex-shrink: 1;
+    -unity-font-style: bold;
+}
+
+.error-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    -unity-background-image-tint-color: #ff4444; 
+    display: none; 
+}
+
+.has-error .error-icon {
+    display: flex;
+}
+
+.has-error .audio-id-field {
+    color: #ff4444;
 }
 
 /* ==============================================================================

@@ -94,13 +94,40 @@ namespace SignalAudioManagerUnity.Editor.UI
 
             _dashboardContainer = root.Q<VisualElement>("dashboard-container");
             _welcomeScreen = root.Q<VisualElement>("welcome-screen");
+            
+            root.schedule.Execute(() => {
+                CheckResponsivity(root.resolvedStyle.width);
+            }).StartingIn(100);
 
             Button setupBtn = root.Q<Button>("btn-initial-setup");
-            if (setupBtn != null) setupBtn.clicked += RunInitialSetup;
+            if (setupBtn != null) setupBtn.clicked += RunInitialSetupWithFolderPicker;
 
             InitializeTabs(root);
             UpdateUIState();
             root.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
+        }
+        
+        private void RunInitialSetupWithFolderPicker()
+        {
+            string selectedPath = EditorUtility.OpenFolderPanel("Select Setup Folder", "Assets", "");
+    
+            if (string.IsNullOrEmpty(selectedPath)) return;
+            
+            if (selectedPath.StartsWith(Application.dataPath)) {
+                selectedPath = "Assets" + selectedPath.Substring(Application.dataPath.Length);
+            } else {
+                EditorUtility.DisplayDialog("Error", "Please select a folder inside your Assets directory.", "OK");
+                return;
+            }
+
+            RunInitialSetup(selectedPath);
+        }
+        
+        private void CheckResponsivity(float width)
+        {
+            if (_dashboardContainer == null) return;
+            if (width < 600f) _dashboardContainer.AddToClassList("collapsed-mode");
+            else _dashboardContainer.RemoveFromClassList("collapsed-mode");
         }
         
         private void OnGeometryChanged(GeometryChangedEvent evt)
@@ -495,25 +522,95 @@ namespace SignalAudioManagerUnity.Editor.UI
                 SerializedProperty itemProperty = listProperty.GetArrayElementAtIndex(index);
 
                 var idField = element.Q<TextField>("audio-id-field");
-                if (idField != null) idField.BindProperty(itemProperty.FindPropertyRelative("audioID"));
+                idField?.BindProperty(itemProperty.FindPropertyRelative("audioID"));
 
                 var clipsField = element.Q<PropertyField>("audio-clips-field");
-                if (clipsField != null) clipsField.BindProperty(itemProperty.FindPropertyRelative("audioClips"));
+                clipsField?.BindProperty(itemProperty.FindPropertyRelative("audioClips"));
 
                 var minVolField = element.Q<PropertyField>("min-vol-field");
-                if (minVolField != null) minVolField.BindProperty(itemProperty.FindPropertyRelative("minVolume"));
+                minVolField?.BindProperty(itemProperty.FindPropertyRelative("minVolume"));
 
                 var maxVolField = element.Q<PropertyField>("max-vol-field");
-                if (maxVolField != null) maxVolField.BindProperty(itemProperty.FindPropertyRelative("maxVolume"));
+                maxVolField?.BindProperty(itemProperty.FindPropertyRelative("maxVolume"));
 
                 var minPitchField = element.Q<PropertyField>("min-pitch-field");
-                if (minPitchField != null) minPitchField.BindProperty(itemProperty.FindPropertyRelative("minPitch"));
+                minPitchField?.BindProperty(itemProperty.FindPropertyRelative("minPitch"));
 
                 var maxPitchField = element.Q<PropertyField>("max-pitch-field");
-                if (maxPitchField != null) maxPitchField.BindProperty(itemProperty.FindPropertyRelative("maxPitch"));
+                maxPitchField?.BindProperty(itemProperty.FindPropertyRelative("maxPitch"));
 
-                Button playBtn = element.Q<Button>("btn-play");
+                var playBtn = element.Q<Button>("btn-play");
                 if (playBtn != null) playBtn.userData = index;
+
+                var errorIcon = element.Q<VisualElement>("error-icon");
+                if (errorIcon == null)
+                {
+                    errorIcon = new VisualElement { name = "error-icon" };
+                    errorIcon.style.width = 16;
+                    errorIcon.style.height = 16;
+                    errorIcon.style.marginRight = 8;
+                    SetIcon(errorIcon, "icon_error");
+                    
+                    var header = element.Q<VisualElement>("audio-entry-header");
+                    if (header != null)
+                    {
+                        header.Insert(0, errorIcon);
+                    }
+                    else
+                    {
+                        element.Insert(0, errorIcon);
+                    }
+                }
+
+                void ValidateEntry()
+                {
+                    if (itemProperty == null) return;
+                    
+                    itemProperty.serializedObject.Update();
+                    
+                    string id = itemProperty.FindPropertyRelative("audioID").stringValue;
+                    SerializedProperty clipsProp = itemProperty.FindPropertyRelative("audioClips");
+                    
+                    bool hasValidClip = false;
+                    if (clipsProp != null && clipsProp.isArray)
+                    {
+                        for (int i = 0; i < clipsProp.arraySize; i++)
+                        {
+                            var elementProp = clipsProp.GetArrayElementAtIndex(i);
+                            if (elementProp != null && elementProp.objectReferenceValue != null)
+                            {
+                                hasValidClip = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(id) || !hasValidClip)
+                    {
+                        errorIcon.style.display = DisplayStyle.Flex;
+                        errorIcon.style.unityBackgroundImageTintColor = new Color(1f, 0.26f, 0.26f);
+                        errorIcon.tooltip = string.IsNullOrEmpty(id) ? "Audio ID is empty!" : "No valid AudioClips assigned!";
+                        
+                        if (idField != null)
+                        {
+                            var textInput = idField.Q<VisualElement>(className: "unity-base-text-field__input");
+                            if (textInput != null) textInput.style.color = new Color(1f, 0.26f, 0.26f);
+                        }
+                    }
+                    else
+                    {
+                        errorIcon.style.display = DisplayStyle.None;
+                        
+                        if (idField != null)
+                        {
+                            var textInput = idField.Q<VisualElement>(className: "unity-base-text-field__input");
+                            if (textInput != null) textInput.style.color = StyleKeyword.Null;
+                        }
+                    }
+                }
+
+                ValidateEntry();
+                element.schedule.Execute(ValidateEntry).Every(250);
             };
         }
 
@@ -532,20 +629,27 @@ namespace SignalAudioManagerUnity.Editor.UI
             _previewSource.Play();
         }
 
-        private void RunInitialSetup()
+        private void RunInitialSetup(string selectedPath)
         {
-            string targetBaseFolder = "Assets/Resenha Studio";
-            string targetFolder = "Assets/Resenha Studio/SignalAudio_Setup";
-            string resourcesFolder = "Assets/Resenha Studio/SignalAudio_Setup/Resources";
-            
-            if (!AssetDatabase.IsValidFolder(targetBaseFolder))
+            string targetBaseFolder = !string.IsNullOrEmpty(selectedPath) ? selectedPath : "Assets/Resenha Studio";
+
+            if (targetBaseFolder == "Assets/Resenha Studio" && !AssetDatabase.IsValidFolder(targetBaseFolder))
+            {
                 AssetDatabase.CreateFolder("Assets", "Resenha Studio");
-                
+            }
+
+            string targetFolder = $"{targetBaseFolder}/SignalAudio_Setup";
+            string resourcesFolder = $"{targetFolder}/Resources";
+
             if (!AssetDatabase.IsValidFolder(targetFolder))
+            {
                 AssetDatabase.CreateFolder(targetBaseFolder, "SignalAudio_Setup");
+            }
 
             if (!AssetDatabase.IsValidFolder(resourcesFolder))
+            {
                 AssetDatabase.CreateFolder(targetFolder, "Resources");
+            }
 
             string mixerGuid = FindTemplateGuid("SignalAudioMixer", "t:AudioMixerController");
             string sfxPrefabGuid = FindTemplateGuid("SFX_Prefab", "t:Prefab");

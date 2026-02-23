@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     
-    <ui:VisualElement name="welcome-screen" class="welcome-screen">
-        <ui:Label text="Welcome to Signal Audio Manager" class="welcome-title" />
-        <ui:Label text="No audio configuration found in this project." class="welcome-subtitle" />
-        <ui:Label text="Click the button below to automatically generate the necessary folders, audio mixers, prefabs, and configuration files at:" class="welcome-desc" />
-        <ui:Label text="Assets/Resenha Studio/SignalAudio_Setup/Resources/" class="welcome-path" />
-        <ui:Button name="btn-initial-setup" text="🚀 Generate Initial Setup" class="setup-btn" />
+    <ui:VisualElement name="welcome-screen" class="welcome-screen" style="align-items: center; justify-content: center; height: 100%; width: 100%;">
+        <ui:VisualElement class="section-container" style="width: 85%; max-width: 600px; align-items: center; padding: 40px 20px; border-radius: 12px; background-color: rgba(0, 0, 0, 0.2);">
+        
+            <ui:Label text="🎧" style="font-size: 48px; margin-bottom: 15px;" />
+        
+            <ui:Label text="Welcome to Signal Audio Manager" class="welcome-title" style="font-size: 24px; color: #9d72f5; -unity-font-style: bold; margin-bottom: 5px; white-space: normal; -unity-text-align: middle-center;" />
+            <ui:Label text="No audio configuration found in this project." class="welcome-subtitle" style="font-size: 14px; color: #ff8888; margin-bottom: 25px; -unity-font-style: bold; white-space: normal; -unity-text-align: middle-center;" />
+        
+            <ui:Label text="Click the button below to automatically generate the necessary folders, audio mixers, prefabs, and configuration files." class="welcome-desc" style="font-size: 14px; white-space: normal; -unity-text-align: middle-center; margin-bottom: 10px; opacity: 0.8;" />
+            <ui:Label text="You will be prompted to choose the destination folder." class="welcome-desc" style="font-size: 13px; white-space: normal; -unity-text-align: middle-center; margin-bottom: 35px; color: #4ec9b0;" />
+        
+            <ui:Button name="btn-initial-setup" text="🚀 Generate Initial Setup" class="setup-btn" style="padding: 15px 30px; font-size: 16px; border-radius: 8px; white-space: normal;" />
+        
+        </ui:VisualElement>
     </ui:VisualElement>
 
     <ui:VisualElement name="dashboard-container" class="dashboard-container">
