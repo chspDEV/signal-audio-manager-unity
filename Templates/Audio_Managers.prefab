@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5644225838733795475}
   - component: {fileID: 3559134084435081771}
+  - component: {fileID: -2448141716493172944}
   m_Layer: 0
   m_Name: Audio_Managers
   m_TagString: Untagged
@@ -45,3 +46,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _config: {fileID: 11400000, guid: 95320b7fd942392409b1dfa634894279, type: 2}
+--- !u!114 &-2448141716493172944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2597464802003937962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0e5d9f47a6387e47819a9172dc4f1c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SignalAudioManagerUnity::SignalAudioManagerUnity.Core.AmbientSoundManager
+  ambientConfigs: []
+  currentAmbient: {fileID: 0}
