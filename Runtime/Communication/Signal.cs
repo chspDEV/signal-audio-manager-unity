@@ -234,6 +234,11 @@ namespace SignalAudioManagerUnity.Communication
         /// </summary>
         public static void SetSFXVolume(float normalizedVolume) => AudioEventChannel.RaiseSetGroupVolume(AudioCategory.SFX, normalizedVolume);
         
+        /// <summary>
+        /// Adjusts the UI Audio Mixer volume.
+        /// </summary>
+        public static void SetUIVolume(float normalizedVolume) => AudioEventChannel.RaiseSetGroupVolume(AudioCategory.UI, normalizedVolume);
+        
         #endregion
     }
 }
