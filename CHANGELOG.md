@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/chspDEV/signal-audio-manager-unity/compare/v1.0.3...v1.0.4) (2026-02-24)
+
+
+### Bug Fixes
+
+* errors prevention ([fc25695](https://github.com/chspDEV/signal-audio-manager-unity/commit/fc2569596084aee035606f3bb5bbdbd324918591))
+
 ## [1.0.3](https://github.com/chspDEV/signal-audio-manager-unity/compare/v1.0.2...v1.0.3) (2026-02-23)
 
 
