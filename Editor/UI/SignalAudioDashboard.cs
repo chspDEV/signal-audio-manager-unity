@@ -254,13 +254,28 @@ namespace SignalAudioManagerUnity.Editor.UI
 
             SoundManagerSO data = _serializedConfig.targetObject as SoundManagerSO;
             
-            string folderPath = "Assets/Resenha Studio/SignalAudio_Setup/Runtime";
-            if (!AssetDatabase.IsValidFolder(folderPath))
+            string filePath = EditorPrefs.GetString("SignalAudio_KeysPath", "");
+            
+            if (string.IsNullOrEmpty(filePath) || !System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(filePath)))
             {
-                Directory.CreateDirectory(Path.Combine(Application.dataPath, "Resenha Studio/SignalAudio_Setup/Runtime"));
-            }
+                string defaultDir = "Assets";
+                string soPath = AssetDatabase.GetAssetPath(data);
+                if (!string.IsNullOrEmpty(soPath)) 
+                {
+                    defaultDir = System.IO.Path.GetDirectoryName(soPath);
+                }
 
-            string filePath = Path.Combine(Application.dataPath, "Resenha Studio/SignalAudio_Setup/Runtime/SignalAudioKeys.cs");
+                filePath = EditorUtility.SaveFilePanelInProject(
+                    "Save AudioKeys Script", 
+                    "AudioKeys", 
+                    "cs", 
+                    "Choose where to save the generated AudioKeys script.", 
+                    defaultDir);
+                
+                if (string.IsNullOrEmpty(filePath)) return;
+
+                EditorPrefs.SetString("SignalAudio_KeysPath", filePath);
+            }
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("/* ==============================================================================");
@@ -299,12 +314,12 @@ namespace SignalAudioManagerUnity.Editor.UI
 
             sb.AppendLine("    }");
             sb.AppendLine("}");
-
-            File.WriteAllText(filePath, sb.ToString());
+            
+            System.IO.File.WriteAllText(filePath, sb.ToString());
             
             AssetDatabase.Refresh(); 
             
-            EditorUtility.DisplayDialog("Success", "SignalAudioKeys.cs generated successfully!\nYou can now use AudioKeys.SFX.your_sound in your scripts.", "OK");
+            EditorUtility.DisplayDialog("Success", $"AudioKeys.cs generated successfully at:\n{filePath}\n\nYou can now use AudioKeys.SFX.your_sound in your scripts.", "OK");
         }
         
         private string SanitizeVariableName(string input)
