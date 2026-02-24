@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
     <ui:ScrollView class="tab-scroll-view">
         
+        <ui:VisualElement class="section-container" style="margin-top: 20px; border-top-width: 2px; border-top-color: rgba(255,255,255,0.05); padding-top: 20px;">
+            <ui:Label text="🏷️ Batch Renamer Tool" class="section-header" style="color: #e5c07b;" />
+            <ui:Label text="Automatically add a prefix to all audio files in a folder. Perfect for preparing your assets before running the importers above." class="welcome-desc" style="margin-bottom: 15px; -unity-text-align: middle-left; width: 100%;" />
+            
+            <uie:ObjectField name="folder-picker-rename" label="Target Folder" />
+            <ui:TextField name="prefix-input-rename" label="Prefix to Add" />
+            
+            <ui:VisualElement style="align-items: flex-end; margin-top: 15px;">
+                <ui:Button name="btn-run-rename" text="Rename Files" class="setup-btn" style="background-color: #8c7335;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        
+        <ui:VisualElement style="background-color: rgba(157, 114, 245, 0.1); border-left-width: 4px; border-left-color: #9d72f5; padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+            <ui:Label text="💡 Importer Rules" style="-unity-font-style: bold; color: #9d72f5; margin-bottom: 6px; font-size: 14px;" />
+            <ui:Label text="Only files starting exactly with the specified prefix will be imported." style="color: #cccccc; white-space: normal; font-size: 13px; margin-bottom: 4px;" />
+            <ui:Label text="The prefix is automatically removed from the final Audio ID (e.g., a file named 'sfx_jump' becomes just 'jump')." style="color: #aaaaaa; white-space: normal; font-size: 12px; -unity-font-style: italic;" />
+        </ui:VisualElement>
+
         <ui:VisualElement class="section-container">
             <ui:Label text="🎵 Music Importer" class="section-header" />
             <ui:Label text="Select your music folder to automatically generate entries based on file names." class="welcome-desc" style="margin-bottom: 15px; -unity-text-align: middle-left; width: 100%;" />
@@ -10,7 +29,7 @@
             <ui:TextField name="prefix-input-music" label="File Prefix" />
             
             <ui:VisualElement style="align-items: flex-end; margin-top: 15px;">
-                <ui:Button name="btn-run-import-music" text="⬇️ Import Music" class="setup-btn" />
+                <ui:Button name="btn-run-import-music" text="Import Music" class="setup-btn" />
             </ui:VisualElement>
         </ui:VisualElement>
 
@@ -22,7 +41,7 @@
             <ui:TextField name="prefix-input-sfx" label="File Prefix" />
             
             <ui:VisualElement style="align-items: flex-end; margin-top: 15px;">
-                <ui:Button name="btn-run-import-sfx" text="⬇️ Import SFX" class="setup-btn" />
+                <ui:Button name="btn-run-import-sfx" text="Import SFX" class="setup-btn" />
             </ui:VisualElement>
         </ui:VisualElement>
 

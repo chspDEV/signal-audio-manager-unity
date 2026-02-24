@@ -398,8 +398,66 @@ namespace SignalAudioManagerUnity.Editor.UI
             prefixSfx.value = EditorPrefs.GetString("SignalAudio_ImportPrefix_SFX", "sfx_");
 
             btnSfx.clicked += () => RunBatchImport("SFX", folderSfx.value as DefaultAsset, prefixSfx.value);
+            
+            // BATCH RENAMER CARD
+            ObjectField folderRename = content.Q<ObjectField>("folder-picker-rename");
+            folderRename.objectType = typeof(DefaultAsset);
+            TextField prefixRename = content.Q<TextField>("prefix-input-rename");
+            Button btnRename = content.Q<Button>("btn-run-rename");
+
+            string savedPathRename = EditorPrefs.GetString("SignalAudio_RenamePath", "");
+            if (!string.IsNullOrEmpty(savedPathRename)) folderRename.value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(savedPathRename);
+            prefixRename.value = EditorPrefs.GetString("SignalAudio_RenamePrefix", "sfx_");
+
+            btnRename.clicked += () => RunBatchRename(folderRename.value as DefaultAsset, prefixRename.value);
 
             _mainContent.Add(content);
+        }
+        
+        private void RunBatchRename(DefaultAsset targetFolder, string prefix)
+        {
+            if (targetFolder == null)
+            {
+                EditorUtility.DisplayDialog("Rename Error", "Please assign a target folder first.", "OK");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(prefix))
+            {
+                EditorUtility.DisplayDialog("Rename Error", "The Prefix cannot be empty.", "OK");
+                return;
+            }
+
+            string path = AssetDatabase.GetAssetPath(targetFolder);
+            EditorPrefs.SetString("SignalAudio_RenamePath", path);
+            EditorPrefs.SetString("SignalAudio_RenamePrefix", prefix);
+
+            string[] audioGuids = AssetDatabase.FindAssets("t:AudioClip", new[] { path });
+            int renamedCount = 0;
+
+            foreach (string guid in audioGuids)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                string filename = Path.GetFileNameWithoutExtension(assetPath);
+                
+                if (!filename.StartsWith(prefix))
+                {
+                    string newName = prefix + filename;
+                    AssetDatabase.RenameAsset(assetPath, newName);
+                    renamedCount++;
+                }
+            }
+
+            if (renamedCount > 0)
+            {
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+                EditorUtility.DisplayDialog("Rename Successful!", $"✓ Successfully renamed {renamedCount} audio files.", "OK");
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("No Files Renamed", $"All audio files in this folder already start with '{prefix}', or no audio files were found.", "OK");
+            }
         }
 
         private void RunBatchImport(string targetDB, DefaultAsset importFolder, string prefix)
@@ -542,70 +600,112 @@ namespace SignalAudioManagerUnity.Editor.UI
                 var playBtn = element.Q<Button>("btn-play");
                 if (playBtn != null) playBtn.userData = index;
 
-                var errorIcon = element.Q<VisualElement>("error-icon");
-                if (errorIcon == null)
+                // --- NOVO SISTEMA DE BANNER DE ERRO ---
+                var errorContainer = element.Q<VisualElement>("error-container");
+                Label errorLabel = null;
+
+                if (errorContainer == null)
                 {
-                    errorIcon = new VisualElement { name = "error-icon" };
-                    errorIcon.style.width = 16;
-                    errorIcon.style.height = 16;
-                    errorIcon.style.marginRight = 8;
-                    SetIcon(errorIcon, "icon_error");
+                    errorContainer = new VisualElement { name = "error-container" };
+                    errorContainer.style.flexDirection = FlexDirection.Row;
+                    errorContainer.style.alignItems = Align.Center;
+                    errorContainer.style.backgroundColor = new Color(0.25f, 0.08f, 0.08f, 0.9f); 
+                    errorContainer.style.paddingTop = 6;
+                    errorContainer.style.paddingBottom = 6;
+                    errorContainer.style.paddingLeft = 10;
+                    errorContainer.style.paddingRight = 10;
+                    errorContainer.style.marginTop = 10;
+                    errorContainer.style.borderBottomLeftRadius = 6;
+                    errorContainer.style.borderBottomRightRadius = 6;
+                    errorContainer.style.borderTopRightRadius = 6;
+                    errorContainer.style.borderTopLeftRadius = 6;
+                    errorContainer.style.borderLeftWidth = 3;
+                    errorContainer.style.borderLeftColor = new Color(1f, 0.3f, 0.3f);
+                    errorContainer.style.display = DisplayStyle.None;
+
+                    var icon = new VisualElement { name = "error-icon" };
+                    icon.style.width = 16;
+                    icon.style.height = 16;
+                    icon.style.marginRight = 8;
+                    icon.style.unityBackgroundImageTintColor = new Color(1f, 0.4f, 0.4f);
+                    SetIcon(icon, "icon_error");
+
+                    errorLabel = new Label { name = "error-label" };
+                    errorLabel.style.color = new Color(1f, 0.7f, 0.7f);
+                    errorLabel.style.fontSize = 12;
+                    errorLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+
+                    errorContainer.Add(icon);
+                    errorContainer.Add(errorLabel);
                     
-                    var header = element.Q<VisualElement>("audio-entry-header");
-                    if (header != null)
-                    {
-                        header.Insert(0, errorIcon);
-                    }
-                    else
-                    {
-                        element.Insert(0, errorIcon);
-                    }
+                    element.Insert(0, errorContainer);
+                }
+                else
+                {
+                    errorLabel = errorContainer.Q<Label>("error-label");
                 }
 
                 void ValidateEntry()
                 {
-                    if (itemProperty == null) return;
-                    
-                    itemProperty.serializedObject.Update();
-                    
-                    string id = itemProperty.FindPropertyRelative("audioID").stringValue;
-                    SerializedProperty clipsProp = itemProperty.FindPropertyRelative("audioClips");
-                    
-                    bool hasValidClip = false;
-                    if (clipsProp != null && clipsProp.isArray)
+                    try
                     {
-                        for (int i = 0; i < clipsProp.arraySize; i++)
+                        if (itemProperty == null || itemProperty.serializedObject == null) return;
+                        
+                        if (index >= listProperty.arraySize) return;
+
+                        itemProperty.serializedObject.Update();
+                        
+                        var idProp = itemProperty.FindPropertyRelative("audioID");
+                        if (idProp == null) return;
+
+                        string id = idProp.stringValue;
+                        SerializedProperty clipsProp = itemProperty.FindPropertyRelative("audioClips");
+                        
+                        bool hasValidClip = false;
+                        if (clipsProp != null && clipsProp.isArray)
                         {
-                            var elementProp = clipsProp.GetArrayElementAtIndex(i);
-                            if (elementProp != null && elementProp.objectReferenceValue != null)
+                            for (int i = 0; i < clipsProp.arraySize; i++)
                             {
-                                hasValidClip = true;
-                                break;
+                                var elementProp = clipsProp.GetArrayElementAtIndex(i);
+                                if (elementProp != null && elementProp.objectReferenceValue != null)
+                                {
+                                    hasValidClip = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(id) || !hasValidClip)
+                        {
+                            errorContainer.style.display = DisplayStyle.Flex;
+                            
+                            if (errorLabel != null)
+                            {
+                                errorLabel.text = string.IsNullOrEmpty(id) 
+                                    ? "Critical: Audio ID cannot be empty!" 
+                                    : "Critical: No valid AudioClips assigned to this ID!";
+                            }
+                            
+                            if (idField != null)
+                            {
+                                var textInput = idField.Q<VisualElement>(className: "unity-base-text-field__input");
+                                if (textInput != null) textInput.style.color = new Color(1f, 0.4f, 0.4f);
+                            }
+                        }
+                        else
+                        {
+                            errorContainer.style.display = DisplayStyle.None;
+                            
+                            if (idField != null)
+                            {
+                                var textInput = idField.Q<VisualElement>(className: "unity-base-text-field__input");
+                                if (textInput != null) textInput.style.color = StyleKeyword.Null;
                             }
                         }
                     }
+                    catch (System.Exception)
+                    {
 
-                    if (string.IsNullOrEmpty(id) || !hasValidClip)
-                    {
-                        errorIcon.style.display = DisplayStyle.Flex;
-                        errorIcon.style.unityBackgroundImageTintColor = new Color(1f, 0.26f, 0.26f);
-                        errorIcon.tooltip = string.IsNullOrEmpty(id) ? "Audio ID is empty!" : "No valid AudioClips assigned!";
-                        
-                        if (idField != null)
-                        {
-                            var textInput = idField.Q<VisualElement>(className: "unity-base-text-field__input");
-                            if (textInput != null) textInput.style.color = new Color(1f, 0.26f, 0.26f);
-                        }
-                    }
-                    else
-                    {
-                        errorIcon.style.display = DisplayStyle.None;
-                        
-                        if (idField != null)
-                        {
-                            var textInput = idField.Q<VisualElement>(className: "unity-base-text-field__input");
-                            if (textInput != null) textInput.style.color = StyleKeyword.Null;
-                        }
                     }
                 }
 
@@ -629,15 +729,15 @@ namespace SignalAudioManagerUnity.Editor.UI
             _previewSource.Play();
         }
 
-        private void RunInitialSetup(string selectedPath)
+       private void RunInitialSetup(string selectedPath)
         {
             string targetBaseFolder = !string.IsNullOrEmpty(selectedPath) ? selectedPath : "Assets/Resenha Studio";
             string targetFolder = $"{targetBaseFolder}/SignalAudio_Setup";
             string resourcesFolder = $"{targetFolder}/Resources";
             
-            string absoluteBasePath = Path.Combine(Application.dataPath, targetBaseFolder.Substring(7));
-            string absoluteTargetFolder = Path.Combine(Application.dataPath, targetFolder.Substring(7));
-            string absoluteResourcesFolder = Path.Combine(Application.dataPath, resourcesFolder.Substring(7));
+            string absoluteBasePath = Application.dataPath + targetBaseFolder.Substring(6);
+            string absoluteTargetFolder = Application.dataPath + targetFolder.Substring(6);
+            string absoluteResourcesFolder = Application.dataPath + resourcesFolder.Substring(6);
             
             if (!Directory.Exists(absoluteBasePath)) Directory.CreateDirectory(absoluteBasePath);
             if (!Directory.Exists(absoluteTargetFolder)) Directory.CreateDirectory(absoluteTargetFolder);
@@ -649,7 +749,7 @@ namespace SignalAudioManagerUnity.Editor.UI
             string sfxPrefabGuid = FindTemplateGuid("SFX_Prefab", "t:Prefab");
             string managerPrefabGuid = FindTemplateGuid("Audio_Managers", "t:Prefab");
 
-            if (string.IsNullOrEmpty(mixerGuid) || string.IsNullOrEmpty(sfxPrefabGuid))
+            if (string.IsNullOrEmpty(mixerGuid) || string.IsNullOrEmpty(sfxPrefabGuid) || string.IsNullOrEmpty(managerPrefabGuid))
             {
                 EditorUtility.DisplayDialog("Setup Error", "Templates not found in the package.", "OK");
                 return;
@@ -664,8 +764,13 @@ namespace SignalAudioManagerUnity.Editor.UI
             AssetDatabase.CopyAsset(AssetDatabase.GUIDToAssetPath(managerPrefabGuid), newManagerPath);
 
             SoundManagerSO newSettings = ScriptableObject.CreateInstance<SoundManagerSO>();
-            newSettings.audioMixer = AssetDatabase.LoadAssetAtPath<AudioMixer>(newMixerPath);
-            newSettings.sfxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(newSfxPath);
+            
+            AudioMixer loadedMixer = AssetDatabase.LoadAssetAtPath<AudioMixer>(newMixerPath);
+            GameObject loadedSfxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(newSfxPath);
+
+            if (loadedMixer != null) newSettings.audioMixer = loadedMixer;
+            if (loadedSfxPrefab != null) newSettings.sfxPrefab = loadedSfxPrefab;
+
             newSettings.masterVolumeParam = "MasterVolume";
             newSettings.musicVolumeParam = "MusicVolume";
             newSettings.sfxVolumeParam = "SFXVolume";
@@ -689,6 +794,10 @@ namespace SignalAudioManagerUnity.Editor.UI
                     }
                     PrefabUtility.SavePrefabAsset(managerPrefab);
                 }
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Setup Warning", "Audio_Managers prefab could not be loaded for configuration. Please check the Resources folder.", "OK");
             }
 
             AssetDatabase.SaveAssets();

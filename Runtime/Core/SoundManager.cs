@@ -83,6 +83,8 @@ namespace SignalAudioManagerUnity.Core
         {
             foreach (var entry in _config.musicDatabase)
             {
+                entry.audioClips.RemoveAll(clip => clip == null);
+                
                 if (entry.audioClips.Count > 0 && !string.IsNullOrEmpty(entry.audioID))
                 {
                     _musicClips[entry.audioID.ToLowerInvariant()] = entry;
@@ -90,6 +92,8 @@ namespace SignalAudioManagerUnity.Core
             }
             foreach (var entry in _config.sfxDatabase)
             {
+                entry.audioClips.RemoveAll(clip => clip == null);
+                
                 if (entry.audioClips.Count > 0 && !string.IsNullOrEmpty(entry.audioID))
                 {
                     _sfxClips[entry.audioID.ToLowerInvariant()] = entry;
@@ -146,6 +150,7 @@ namespace SignalAudioManagerUnity.Core
         private void PlayAudio(AudioClipConfig config)
         {
             if (config == null) return;
+            
             switch (config.Category)
             {
                 case AudioCategory.Music: PlayMusic(config); break;
@@ -159,7 +164,11 @@ namespace SignalAudioManagerUnity.Core
         // ==========================================
         private void PlayMusic(AudioClipConfig config)
         {
-            if (!_musicClips.TryGetValue(config.AudioID.ToLowerInvariant(), out AudioEntry entry)) return;
+            if (!_musicClips.TryGetValue(config.AudioID.ToLowerInvariant(), out var entry))
+            {
+                Debug.LogWarning($"[Signal Audio] Music ID '{config.AudioID}' not found! Check your spelling or the Signal Dashboard.");
+                return;
+            }
             
             AudioClip clipToPlay = entry.GetRandomClip();
             if (clipToPlay == null) return;
@@ -170,7 +179,11 @@ namespace SignalAudioManagerUnity.Core
 
         private void PlaySFX(AudioClipConfig config)
         {
-            if (!_sfxClips.TryGetValue(config.AudioID.ToLowerInvariant(), out AudioEntry entry)) return;
+            if (!_musicClips.TryGetValue(config.AudioID.ToLowerInvariant(), out var entry))
+            {
+                Debug.LogWarning($"[Signal Audio] Music ID '{config.AudioID}' not found! Check your spelling or the Signal Dashboard.");
+                return;
+            }
 
             AudioClip clipToPlay = entry.GetRandomClip();
             if (clipToPlay == null) return;
@@ -210,7 +223,11 @@ namespace SignalAudioManagerUnity.Core
 
         private void PlayUISound(AudioClipConfig config)
         {
-            if (!_sfxClips.TryGetValue(config.AudioID.ToLowerInvariant(), out AudioEntry entry)) return;
+            if (!_musicClips.TryGetValue(config.AudioID.ToLowerInvariant(), out var entry))
+            {
+                Debug.LogWarning($"[Signal Audio] Music ID '{config.AudioID}' not found! Check your spelling or the Signal Dashboard.");
+                return;
+            }
 
             AudioClip clipToPlay = entry.GetRandomClip();
             if (clipToPlay == null) return;

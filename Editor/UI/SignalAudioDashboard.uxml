@@ -12,14 +12,13 @@
             <ui:Label text="Click the button below to automatically generate the necessary folders, audio mixers, prefabs, and configuration files." class="welcome-desc" style="font-size: 14px; white-space: normal; -unity-text-align: middle-center; margin-bottom: 10px; opacity: 0.8;" />
             <ui:Label text="You will be prompted to choose the destination folder." class="welcome-desc" style="font-size: 13px; white-space: normal; -unity-text-align: middle-center; margin-bottom: 35px; color: #4ec9b0;" />
         
-            <ui:Button name="btn-initial-setup" text="🚀 Generate Initial Setup" class="setup-btn" style="padding: 15px 30px; font-size: 16px; border-radius: 8px; white-space: normal;" />
+            <ui:Button name="btn-initial-setup" text="Initial Setup" class="setup-btn" style="padding: 15px 30px; font-size: 16px; border-radius: 8px; white-space: normal;" />
         
         </ui:VisualElement>
     </ui:VisualElement>
 
     <ui:VisualElement name="dashboard-container" class="dashboard-container">
         <ui:VisualElement name="sidebar" class="sidebar">
-            <ui:Label text="Signal Audio" class="sidebar-title" />
             
             <ui:Button name="tab-global" class="sidebar-btn sidebar-btn-active">
                 <ui:VisualElement name="icon-global" class="sidebar-icon" />

@@ -30,9 +30,11 @@
         <ui:VisualElement class="section-container" style="margin-top: 20px;">
             <ui:Label text="💻 Code Generation (Strongly Typed API)" class="section-header" style="color: #4ec9b0;" />
             <ui:Label text="Generate a C# script containing all your Audio IDs as constants. This prevents typos and enables IDE autocomplete." class="help-text" />
-            
+    
+            <ui:Label text="Example: Signal.PlaySFX(AudioKeys.SFX.my_sound_id);" class="help-text" style="color: #dcdcaa; -unity-font-style: italic; margin-top: 5px; background-color: rgba(0, 0, 0, 0.2); padding: 4px; border-radius: 4px;" />
+    
             <ui:VisualElement style="align-items: flex-end; margin-top: 10px;">
-                <ui:Button name="btn-generate-keys" text="⚡ Generate AudioKeys.cs" class="setup-btn" style="background-color: #2b5c50;" />
+                <ui:Button name="btn-generate-keys" text="Generate AudioKeys" class="setup-btn" style="background-color: #2b5c50;" />
             </ui:VisualElement>
         </ui:VisualElement>
 

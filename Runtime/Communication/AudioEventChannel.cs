@@ -44,6 +44,17 @@ namespace SignalAudioManagerUnity.Communication
         {
             OnSetGroupVolume?.Invoke(category, normalizedVolume);
         }
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            OnAudioPlayRequested = null;
+            OnStopMusicRequested = null;
+            OnPauseMusicRequested = null;
+            OnResumeMusicRequested = null;
+            OnStopInstanceRequested = null;
+            OnSetGroupVolume = null;
+        }
     }
 
     public enum AudioCategory
