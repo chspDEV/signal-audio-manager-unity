@@ -351,11 +351,15 @@ namespace SignalAudioManagerUnity.Editor.UI
             {
                 pdfBtn.clicked += () => 
                 {
-                    string[] pdfGuids = AssetDatabase.FindAssets("S_A_M_Doc t:DefaultAsset");
+                    string[] pdfGuids = AssetDatabase.FindAssets("Signal_Audio_Manager_Doc");
+            
                     if (pdfGuids.Length > 0)
                     {
-                        string path = AssetDatabase.GUIDToAssetPath(pdfGuids[0]);
-                        Application.OpenURL("file://" + Application.dataPath.Replace("Assets", "") + path);
+                        string relativePath = AssetDatabase.GUIDToAssetPath(pdfGuids[0]);
+                        
+                        string absolutePath = System.IO.Path.GetFullPath(relativePath);
+                        
+                        EditorUtility.OpenWithDefaultApp(absolutePath);
                     }
                     else
                     {
