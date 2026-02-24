@@ -179,9 +179,9 @@ namespace SignalAudioManagerUnity.Core
 
         private void PlaySFX(AudioClipConfig config)
         {
-            if (!_musicClips.TryGetValue(config.AudioID.ToLowerInvariant(), out var entry))
+            if (!_sfxClips.TryGetValue(config.AudioID.ToLowerInvariant(), out var entry))
             {
-                Debug.LogWarning($"[Signal Audio] Music ID '{config.AudioID}' not found! Check your spelling or the Signal Dashboard.");
+                Debug.LogWarning($"[Signal Audio] SFX ID '{config.AudioID}' not found! Check your spelling or the Signal Dashboard.");
                 return;
             }
 
@@ -223,9 +223,9 @@ namespace SignalAudioManagerUnity.Core
 
         private void PlayUISound(AudioClipConfig config)
         {
-            if (!_musicClips.TryGetValue(config.AudioID.ToLowerInvariant(), out var entry))
+            if (!_sfxClips.TryGetValue(config.AudioID.ToLowerInvariant(), out var entry))
             {
-                Debug.LogWarning($"[Signal Audio] Music ID '{config.AudioID}' not found! Check your spelling or the Signal Dashboard.");
+                Debug.LogWarning($"[Signal Audio] SFX/UI ID '{config.AudioID}' not found! Check your spelling or the Signal Dashboard.");
                 return;
             }
 
