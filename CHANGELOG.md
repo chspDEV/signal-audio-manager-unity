@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/chspDEV/signal-audio-manager-unity/compare/v1.0.4...v1.0.5) (2026-02-24)
+
+
+### Bug Fixes
+
+* UI control volume ([0d97a90](https://github.com/chspDEV/signal-audio-manager-unity/commit/0d97a90d5c2c4079d157241fe6aacfa28b82d695))
+
 ## [1.0.4](https://github.com/chspDEV/signal-audio-manager-unity/compare/v1.0.3...v1.0.4) (2026-02-24)
 
 
