@@ -4,7 +4,7 @@ using UnityEngine.Audio;
 
 namespace SignalAudioManagerUnity.Data
 {
-    [CreateAssetMenu(fileName = "SoundManagerSO", menuName = "Signal Audio Manager/Configuration")]
+    [CreateAssetMenu(fileName = "SoundManagerSO", menuName = "ResenhaTools/Signal/Configuration")]
     public class SoundManagerSO : ScriptableObject
     {
         [Header("Audio Mixer Configuration")]

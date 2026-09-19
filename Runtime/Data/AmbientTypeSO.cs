@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace SignalAudioManagerUnity.Data
 {
-    [CreateAssetMenu(fileName = "NewAmbientType", menuName = "Signal Audio Manager/Ambient Type")]
+    [CreateAssetMenu(fileName = "NewAmbientType", menuName = "ResenhaTools/Signal/Ambient Type")]
     public class AmbientTypeSO : ScriptableObject
     {
     }

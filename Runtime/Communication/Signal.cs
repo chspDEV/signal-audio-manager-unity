@@ -1,4 +1,4 @@
-﻿/* ==============================================================================
+/* ==============================================================================
  * CLASS: Signal
  * DESCRIPTION: The main static API for triggering audio events across the game. 
  * Includes advanced overloads for volume/pitch overrides, delayed playback, 
@@ -57,67 +57,79 @@ namespace SignalAudioManagerUnity.Communication
         /// <param name="audioID">The unique ID of the audio entry to play.</param>
         /// <param name="volumeMultiplier">Dynamically scales the volume (1f is default).</param>
         /// <param name="pitchMultiplier">Dynamically scales the pitch (1f is default).</param>
-        public static void PlaySFX(string audioID, float volumeMultiplier = 1f, float pitchMultiplier = 1f)
+        public static long PlaySFX(string audioID, float volumeMultiplier = 1f, float pitchMultiplier = 1f)
         {
             EnsureManagerExists();
+            long id = _nextInstanceId++;
             var config = new AudioClipConfig 
             { 
                 Category = AudioCategory.SFX, 
                 AudioID = audioID,
                 VolumeMultiplier = volumeMultiplier,
-                PitchMultiplier = pitchMultiplier
+                PitchMultiplier = pitchMultiplier,
+                InstanceID = id
             };
             AudioEventChannel.RaisePlayAudio(config);
+            return id;
         }
 
         /// <summary>
         /// Plays a 3D sound effect at a specific world position.
         /// </summary>
-        public static void PlaySFX(string audioID, Vector3 position, float volumeMultiplier = 1f, float pitchMultiplier = 1f)
+        public static long PlaySFX(string audioID, Vector3 position, float volumeMultiplier = 1f, float pitchMultiplier = 1f)
         {
             EnsureManagerExists();
+            long id = _nextInstanceId++;
             var config = new AudioClipConfig 
             { 
                 Category = AudioCategory.SFX, 
                 AudioID = audioID, 
                 Position = position,
                 VolumeMultiplier = volumeMultiplier,
-                PitchMultiplier = pitchMultiplier
+                PitchMultiplier = pitchMultiplier,
+                InstanceID = id
             };
             AudioEventChannel.RaisePlayAudio(config);
+            return id;
         }
 
         /// <summary>
         /// Plays a 3D sound effect attached to a specific transform (follows the object).
         /// </summary>
-        public static void PlaySFX(string audioID, Transform target, float volumeMultiplier = 1f, float pitchMultiplier = 1f)
+        public static long PlaySFX(string audioID, Transform target, float volumeMultiplier = 1f, float pitchMultiplier = 1f)
         {
             EnsureManagerExists();
+            long id = _nextInstanceId++;
             var config = new AudioClipConfig 
             { 
                 Category = AudioCategory.SFX, 
                 AudioID = audioID, 
                 TargetTransform = target,
                 VolumeMultiplier = volumeMultiplier,
-                PitchMultiplier = pitchMultiplier
+                PitchMultiplier = pitchMultiplier,
+                InstanceID = id
             };
             AudioEventChannel.RaisePlayAudio(config);
+            return id;
         }
 
         /// <summary>
         /// Plays a sound effect after a specific delay. Perfect for syncing with animations or particles.
         /// </summary>
-        public static void PlaySFXDelayed(string audioID, float delayInSeconds, float volumeMultiplier = 1f)
+        public static long PlaySFXDelayed(string audioID, float delayInSeconds, float volumeMultiplier = 1f)
         {
             EnsureManagerExists();
+            long id = _nextInstanceId++;
             var config = new AudioClipConfig 
             { 
                 Category = AudioCategory.SFX, 
                 AudioID = audioID, 
                 Delay = delayInSeconds,
-                VolumeMultiplier = volumeMultiplier
+                VolumeMultiplier = volumeMultiplier,
+                InstanceID = id
             };
             AudioEventChannel.RaisePlayAudio(config);
+            return id;
         }
 
         /// <summary>
@@ -148,16 +160,19 @@ namespace SignalAudioManagerUnity.Communication
         /// <summary>
         /// Plays a 2D user interface sound effect. Ignores 3D spatialization.
         /// </summary>
-        public static void PlayUI(string audioID, float volumeMultiplier = 1f)
+        public static long PlayUI(string audioID, float volumeMultiplier = 1f)
         {
             EnsureManagerExists();
+            long id = _nextInstanceId++;
             var config = new AudioClipConfig 
             { 
                 Category = AudioCategory.UI, 
                 AudioID = audioID,
-                VolumeMultiplier = volumeMultiplier
+                VolumeMultiplier = volumeMultiplier,
+                InstanceID = id
             };
             AudioEventChannel.RaisePlayAudio(config);
+            return id;
         }
         
         #endregion
@@ -170,18 +185,21 @@ namespace SignalAudioManagerUnity.Communication
         /// <param name="audioID">The unique ID of the music entry to play.</param>
         /// <param name="fadeDuration">The duration in seconds to fade in/out. Default is 2.0s.</param>
         /// <param name="targetVolume">The maximum volume to reach after fading in. Default is 1f.</param>
-        public static void PlayMusic(string audioID, float fadeDuration = 2.0f, float targetVolume = 1f)
+        public static long PlayMusic(string audioID, float fadeDuration = 2.0f, float targetVolume = 1f)
         {
             EnsureManagerExists();
+            long id = _nextInstanceId++;
             var config = new AudioClipConfig
             {
                 Category = AudioCategory.Music,
                 AudioID = audioID,
                 Loop = true,
                 FadeDuration = fadeDuration,
-                VolumeMultiplier = targetVolume
+                VolumeMultiplier = targetVolume,
+                InstanceID = id
             };
             AudioEventChannel.RaisePlayAudio(config);
+            return id;
         }
         
         #endregion
@@ -203,14 +221,33 @@ namespace SignalAudioManagerUnity.Communication
         /// </summary>
         public static void ResumeMusic() => AudioEventChannel.RaiseResumeMusic();
 
-        /// <summary>
-        /// Stops a specific looping audio instance (like a car engine) by its unique ID.
-        /// </summary>
         public static void StopInstance(long instanceId)
         {
             if (instanceId > 0)
             {
                 AudioEventChannel.RaiseStopInstance(instanceId);
+            }
+        }
+
+        /// <summary>
+        /// Pauses a specific instance of a sound by its unique ID.
+        /// </summary>
+        public static void PauseInstance(long instanceId)
+        {
+            if (instanceId > 0)
+            {
+                AudioEventChannel.RaisePauseInstance(instanceId);
+            }
+        }
+
+        /// <summary>
+        /// Resumes a specific instance of a sound by its unique ID.
+        /// </summary>
+        public static void ResumeInstance(long instanceId)
+        {
+            if (instanceId > 0)
+            {
+                AudioEventChannel.RaiseResumeInstance(instanceId);
             }
         }
 

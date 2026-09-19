@@ -27,6 +27,13 @@ namespace SignalAudioManagerUnity.Communication
         // Event for stopping a specific instance of a sound
         public delegate void StopInstanceAction(long instanceId);
         public static event StopInstanceAction OnStopInstanceRequested;
+
+        // Events for pausing/resuming a specific instance of a sound
+        public delegate void PauseInstanceAction(long instanceId);
+        public static event PauseInstanceAction OnPauseInstanceRequested;
+
+        public delegate void ResumeInstanceAction(long instanceId);
+        public static event ResumeInstanceAction OnResumeInstanceRequested;
         
         public static event System.Action<AudioCategory, float> OnSetGroupVolume;
 
@@ -39,6 +46,8 @@ namespace SignalAudioManagerUnity.Communication
         public static void RaisePauseMusic() => OnPauseMusicRequested?.Invoke();
         public static void RaiseResumeMusic() => OnResumeMusicRequested?.Invoke();
         public static void RaiseStopInstance(long instanceId) => OnStopInstanceRequested?.Invoke(instanceId);
+        public static void RaisePauseInstance(long instanceId) => OnPauseInstanceRequested?.Invoke(instanceId);
+        public static void RaiseResumeInstance(long instanceId) => OnResumeInstanceRequested?.Invoke(instanceId);
         
         public static void RaiseSetGroupVolume(AudioCategory category, float normalizedVolume) 
         {
@@ -53,6 +62,8 @@ namespace SignalAudioManagerUnity.Communication
             OnPauseMusicRequested = null;
             OnResumeMusicRequested = null;
             OnStopInstanceRequested = null;
+            OnPauseInstanceRequested = null;
+            OnResumeInstanceRequested = null;
             OnSetGroupVolume = null;
         }
     }

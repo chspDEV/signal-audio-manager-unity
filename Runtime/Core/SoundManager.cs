@@ -28,7 +28,7 @@ namespace SignalAudioManagerUnity.Core
         private readonly Dictionary<string, AudioEntry> _musicClips = new Dictionary<string, AudioEntry>();
         private readonly Dictionary<string, AudioEntry> _sfxClips = new Dictionary<string, AudioEntry>();
 
-        private readonly Dictionary<long, PooledAudioSource> _activeLoopingInstances = new Dictionary<long, PooledAudioSource>();
+        private readonly Dictionary<long, PooledAudioSource> _activeInstances = new Dictionary<long, PooledAudioSource>();
 
         private void Awake()
         {
@@ -51,6 +51,8 @@ namespace SignalAudioManagerUnity.Core
             AudioEventChannel.OnPauseMusicRequested += PauseMusic;
             AudioEventChannel.OnResumeMusicRequested += ResumeMusic;
             AudioEventChannel.OnStopInstanceRequested += StopInstance;
+            AudioEventChannel.OnPauseInstanceRequested += PauseInstance;
+            AudioEventChannel.OnResumeInstanceRequested += ResumeInstance;
             AudioEventChannel.OnSetGroupVolume += HandleSetGroupVolume;
         }
 
@@ -63,6 +65,8 @@ namespace SignalAudioManagerUnity.Core
             AudioEventChannel.OnPauseMusicRequested -= PauseMusic;
             AudioEventChannel.OnResumeMusicRequested -= ResumeMusic;
             AudioEventChannel.OnStopInstanceRequested -= StopInstance;
+            AudioEventChannel.OnPauseInstanceRequested -= PauseInstance;
+            AudioEventChannel.OnResumeInstanceRequested -= ResumeInstance;
             AudioEventChannel.OnSetGroupVolume -= HandleSetGroupVolume;
         }
 
@@ -192,6 +196,11 @@ namespace SignalAudioManagerUnity.Core
             float finalPitch = entry.GetRandomPitch() * config.PitchMultiplier;
 
             var pooledSource = GetAvailableSourceFromPool(_sfxPool);
+            pooledSource.InstanceID = config.InstanceID;
+            if (config.InstanceID != 0)
+            {
+                _activeInstances[config.InstanceID] = pooledSource;
+            }
 
             if (config.TargetTransform != null)
             {
@@ -214,11 +223,6 @@ namespace SignalAudioManagerUnity.Core
             {
                 pooledSource.Play(clipToPlay, finalVolume, finalPitch, config.Loop, false);
             }
-
-            if (config.Loop && config.InstanceID != 0)
-            {
-                _activeLoopingInstances[config.InstanceID] = pooledSource;
-            }
         }
 
         private void PlayUISound(AudioClipConfig config)
@@ -236,6 +240,12 @@ namespace SignalAudioManagerUnity.Core
             float finalPitch = entry.GetRandomPitch() * config.PitchMultiplier;
 
             var pooledSource = GetAvailableSourceFromPool(_uiPool);
+            pooledSource.InstanceID = config.InstanceID;
+            if (config.InstanceID != 0)
+            {
+                _activeInstances[config.InstanceID] = pooledSource;
+            }
+            
             pooledSource.transform.SetParent(_audioHost.transform);
 
             if (config.Delay > 0f)
@@ -259,10 +269,26 @@ namespace SignalAudioManagerUnity.Core
 
         private void StopInstance(long instanceId)
         {
-            if (_activeLoopingInstances.TryGetValue(instanceId, out PooledAudioSource source))
+            if (_activeInstances.TryGetValue(instanceId, out PooledAudioSource source))
             {
                 source.Stop();
-                _activeLoopingInstances.Remove(instanceId);
+                _activeInstances.Remove(instanceId);
+            }
+        }
+
+        private void PauseInstance(long instanceId)
+        {
+            if (_activeInstances.TryGetValue(instanceId, out PooledAudioSource source))
+            {
+                source.Pause();
+            }
+        }
+
+        private void ResumeInstance(long instanceId)
+        {
+            if (_activeInstances.TryGetValue(instanceId, out PooledAudioSource source))
+            {
+                source.Resume();
             }
         }
 
@@ -281,6 +307,11 @@ namespace SignalAudioManagerUnity.Core
 
         private void ReturnToPool(PooledAudioSource source, Queue<PooledAudioSource> pool)
         {
+            if (source.InstanceID != 0)
+            {
+                _activeInstances.Remove(source.InstanceID);
+                source.InstanceID = 0;
+            }
             source.gameObject.SetActive(false);
             source.transform.SetParent(_audioHost.transform, true);
             pool.Enqueue(source);

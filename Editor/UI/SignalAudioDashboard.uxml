@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     
+    <!-- ── Welcome / Setup Screen ── -->
     <ui:VisualElement name="welcome-screen" class="welcome-screen" style="align-items: center; justify-content: center; height: 100%; width: 100%;">
-        <ui:VisualElement class="section-container" style="width: 85%; max-width: 600px; align-items: center; padding: 40px 20px; border-radius: 12px; background-color: rgba(0, 0, 0, 0.2);">
+        <ui:VisualElement class="section-container" style="width: 85%; max-width: 580px; align-items: center; padding: 48px 32px;">
         
-            <ui:Label text="🎧" style="font-size: 48px; margin-bottom: 15px;" />
+            <ui:Label text="◈" style="font-size: 40px; margin-bottom: 18px; color: #9d72f5;" />
         
-            <ui:Label text="Welcome to Signal Audio Manager" class="welcome-title" style="font-size: 24px; color: #9d72f5; -unity-font-style: bold; margin-bottom: 5px; white-space: normal; -unity-text-align: middle-center;" />
-            <ui:Label text="No audio configuration found in this project." class="welcome-subtitle" style="font-size: 14px; color: #ff8888; margin-bottom: 25px; -unity-font-style: bold; white-space: normal; -unity-text-align: middle-center;" />
+            <ui:Label text="Signal Audio Manager" class="welcome-title" style="font-size: 22px; color: #9d72f5; letter-spacing: 1px;" />
+            <ui:Label text="No audio configuration found in this project." class="welcome-subtitle" style="margin-bottom: 28px;" />
         
-            <ui:Label text="Click the button below to automatically generate the necessary folders, audio mixers, prefabs, and configuration files." class="welcome-desc" style="font-size: 14px; white-space: normal; -unity-text-align: middle-center; margin-bottom: 10px; opacity: 0.8;" />
-            <ui:Label text="You will be prompted to choose the destination folder." class="welcome-desc" style="font-size: 13px; white-space: normal; -unity-text-align: middle-center; margin-bottom: 35px; color: #4ec9b0;" />
+            <ui:Label text="Click the button below to automatically generate the necessary folders, audio mixers, prefabs, and configuration files." class="welcome-desc" style="margin-bottom: 10px;" />
+            <ui:Label text="You will be prompted to choose the destination folder." class="welcome-desc" style="margin-bottom: 36px; color: #4ec9b0;" />
         
-            <ui:Button name="btn-initial-setup" text="Initial Setup" class="setup-btn" style="padding: 15px 30px; font-size: 16px; border-radius: 8px; white-space: normal;" />
+            <ui:Button name="btn-initial-setup" text="INITIAL SETUP" class="setup-btn" style="padding: 12px 32px; font-size: 13px; letter-spacing: 1px;" />
         
         </ui:VisualElement>
     </ui:VisualElement>
 
+    <!-- ── Main Dashboard ── -->
     <ui:VisualElement name="dashboard-container" class="dashboard-container">
         <ui:VisualElement name="sidebar" class="sidebar">
             
+            <ui:Label text="SIGNAL" class="sidebar-title" />
+
             <ui:Button name="tab-global" class="sidebar-btn sidebar-btn-active">
                 <ui:VisualElement name="icon-global" class="sidebar-icon" />
                 <ui:Label text="Global Settings" />
@@ -40,14 +44,16 @@
                 <ui:Label text="Import Tools" />
             </ui:Button>
 
-            <ui:VisualElement style="flex-grow: 1;" /> <ui:Button name="tab-help" class="sidebar-btn">
+            <ui:VisualElement style="flex-grow: 1;" />
+
+            <ui:Button name="tab-help" class="sidebar-btn">
                 <ui:VisualElement name="icon-help" class="sidebar-icon" />
-                <ui:Label text="Tutorial &amp; Help" />
+                <ui:Label text="Help &amp; Docs" />
             </ui:Button>
         </ui:VisualElement>
 
         <ui:VisualElement name="main-content" class="main-content">
-            <ui:Label text="Dashboard initialized." class="placeholder-text" />
+            <ui:Label text="Loading..." class="help-text" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

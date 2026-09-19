@@ -11,6 +11,9 @@ namespace SignalAudioManagerUnity.Core
         private AudioSource _audioSource;
         private Action<PooledAudioSource> _returnToPoolAction;
         private Coroutine _returnCoroutine;
+        
+        public long InstanceID { get; set; }
+        private bool _isPaused;
 
         private void Awake()
         {
@@ -25,6 +28,7 @@ namespace SignalAudioManagerUnity.Core
 
         public void Play(AudioClip clip, float volumeScale, float pitch = 1f, bool loop = false, bool isUISound = false)
         {
+            _isPaused = false;
             gameObject.SetActive(true);
             _audioSource.pitch = pitch;
             _audioSource.loop = loop;
@@ -52,16 +56,39 @@ namespace SignalAudioManagerUnity.Core
             _returnToPoolAction?.Invoke(this);
         }
 
+        public void Pause()
+        {
+            _isPaused = true;
+            _audioSource.Pause();
+        }
+
+        public void Resume()
+        {
+            if (!_isPaused) return;
+            _isPaused = false;
+            _audioSource.UnPause();
+        }
+
         private IEnumerator ReturnToPoolAfterDelay(float delay)
         {
-            yield return new WaitForSeconds(delay);
+            float elapsed = 0f;
+            while (elapsed < delay)
+            {
+                if (!_isPaused) elapsed += Time.deltaTime;
+                yield return null;
+            }
             _returnCoroutine = null;
             _returnToPoolAction?.Invoke(this);
         }
 
         private IEnumerator ReturnToPoolAfterDelayRealtime(float delay)
         {
-            yield return new WaitForSecondsRealtime(delay);
+            float elapsed = 0f;
+            while (elapsed < delay)
+            {
+                if (!_isPaused) elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
             _returnCoroutine = null;
             _returnToPoolAction?.Invoke(this);
         }

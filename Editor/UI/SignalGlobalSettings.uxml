@@ -6,9 +6,10 @@
     xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
 >
     <ui:ScrollView class="tab-scroll-view">
-        
+
+        <!-- Audio Mixer Configuration -->
         <ui:VisualElement class="section-container">
-            <ui:Label text="Audio Mixer Configuration" class="section-header" />
+            <ui:Label text="AUDIO MIXER" class="section-header" />
             <uie:PropertyField binding-path="audioMixer" label="Main Audio Mixer" />
             <uie:PropertyField binding-path="masterVolumeParam" label="Master Volume Param" />
             <uie:PropertyField binding-path="musicVolumeParam" label="Music Volume Param" />
@@ -16,25 +17,32 @@
             <uie:PropertyField binding-path="uiVolumeParam" label="UI Volume Param" />
         </ui:VisualElement>
 
+        <!-- Asset References -->
         <ui:VisualElement class="section-container">
-            <ui:Label text="Asset References" class="section-header" />
+            <ui:Label text="ASSET REFERENCES" class="section-header" />
             <uie:PropertyField binding-path="sfxPrefab" label="SFX Audio Source Prefab" />
         </ui:VisualElement>
 
+        <!-- General Settings -->
         <ui:VisualElement class="section-container">
-            <ui:Label text="General Settings" class="section-header" />
+            <ui:Label text="GENERAL SETTINGS" class="section-header" />
             <uie:PropertyField binding-path="maxSimultaneousMusic" label="Max Simultaneous Music" />
             <uie:PropertyField binding-path="sfxPoolSize" label="SFX Pool Size" />
         </ui:VisualElement>
-        
-        <ui:VisualElement class="section-container" style="margin-top: 20px;">
-            <ui:Label text="💻 Code Generation (Strongly Typed API)" class="section-header" style="color: #4ec9b0;" />
-            <ui:Label text="Generate a C# script containing all your Audio IDs as constants. This prevents typos and enables IDE autocomplete." class="help-text" />
-    
-            <ui:Label text="Example: Signal.PlaySFX(AudioKeys.SFX.my_sound_id);" class="help-text" style="color: #dcdcaa; -unity-font-style: italic; margin-top: 5px; background-color: rgba(0, 0, 0, 0.2); padding: 4px; border-radius: 4px;" />
-    
-            <ui:VisualElement style="align-items: flex-end; margin-top: 10px;">
-                <ui:Button name="btn-generate-keys" text="Generate AudioKeys" class="setup-btn" style="background-color: #2b5c50;" />
+
+        <!-- Code Generation -->
+        <ui:VisualElement class="section-container" style="border-left-color: #4ec9b0; margin-top: 8px;">
+            <ui:Label text="CODE GENERATION" class="section-header" style="color: #4ec9b0;" />
+            <ui:Label text="Generate a C# script with all your Audio IDs as constants — prevents typos and enables IDE autocomplete." class="help-text" />
+            <ui:Label text="Example: Signal.PlaySFX(AudioKeys.SFX.my_sound_id);" class="help-text" style="color: #dcdcaa; -unity-font-style: italic; margin-top: 4px; background-color: rgba(0, 0, 0, 0.35); padding: 6px 8px;" />
+
+            <ui:VisualElement style="flex-direction: row; margin-top: 12px; align-items: center;">
+                <ui:TextField name="keys-path-field" is-read-only="true" style="flex-grow: 1; margin-right: 6px;" />
+                <ui:Button name="btn-change-keys-path" text="Change Path" class="setup-btn" style="padding: 6px 12px; border-bottom-width: 0;" />
+            </ui:VisualElement>
+
+            <ui:VisualElement style="align-items: flex-end; margin-top: 12px;">
+                <ui:Button name="btn-generate-keys" text="GENERATE AUDIOKEYS" class="setup-btn" style="background-color: #2a5248; border-bottom-color: #4ec9b0;" />
             </ui:VisualElement>
         </ui:VisualElement>
 
