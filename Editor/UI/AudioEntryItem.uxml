@@ -6,6 +6,7 @@
             <ui:TextField name="audio-id-field" label="Audio ID:" class="audio-id-field" />
             <ui:Button name="btn-play" text="►" class="icon-btn play-btn" />
             <ui:Button name="btn-stop" text="■" class="icon-btn stop-btn" />
+            <ui:Button name="btn-delete" text="✖" class="icon-btn delete-btn" />
         </ui:VisualElement>
         
         <ui:Foldout text="Details &amp; Variations" class="audio-entry-foldout">

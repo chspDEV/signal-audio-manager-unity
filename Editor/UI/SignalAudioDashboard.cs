@@ -15,6 +15,7 @@ using UnityEngine.Audio;
 using UnityEngine.UIElements;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace SignalAudioManagerUnity.Editor.UI
 {
@@ -29,7 +30,7 @@ namespace SignalAudioManagerUnity.Editor.UI
         private AudioSource _previewSource;
         private GameObject _previewObject;
 
-        [MenuItem("Window/Signal Audio/Dashboard")]
+        [MenuItem("ResenhaTools/Signal/Dashboard")]
         public static void ShowWindow()
         {
             SignalAudioDashboard wnd = GetWindow<SignalAudioDashboard>();
@@ -236,6 +237,35 @@ namespace SignalAudioManagerUnity.Editor.UI
             var content = visualTree.Instantiate();
             content.Bind(_serializedConfig);
             
+            TextField pathField = content.Q<TextField>("keys-path-field");
+            if (pathField != null)
+            {
+                pathField.value = EditorPrefs.GetString("SignalAudio_KeysPath", "Default (Assets or Manager Location)");
+            }
+
+            Button changePathBtn = content.Q<Button>("btn-change-keys-path");
+            if (changePathBtn != null)
+            {
+                changePathBtn.clicked += () =>
+                {
+                    string currentPath = EditorPrefs.GetString("SignalAudio_KeysPath", "Assets");
+                    string defaultDir = System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(currentPath)) ? System.IO.Path.GetDirectoryName(currentPath) : "Assets";
+                    
+                    string newPath = EditorUtility.SaveFilePanelInProject(
+                        "Select AudioKeys Export Location", 
+                        "AudioKeys", 
+                        "cs", 
+                        "Choose where to save the generated AudioKeys script.", 
+                        defaultDir);
+                    
+                    if (!string.IsNullOrEmpty(newPath))
+                    {
+                        EditorPrefs.SetString("SignalAudio_KeysPath", newPath);
+                        if (pathField != null) pathField.value = newPath;
+                    }
+                };
+            }
+
             Button generateBtn = content.Q<Button>("btn-generate-keys");
             if (generateBtn != null)
             {
@@ -346,8 +376,200 @@ namespace SignalAudioManagerUnity.Editor.UI
 
             content.Q<Label>("library-title").text = title;
 
+            // Foldout state per list index (the true SerializedProperty index)
+            var foldoutStates = new Dictionary<int, bool>();
+
+            string currentSearchText = "";
+            var searchField = content.Q<ToolbarSearchField>("audio-search-field");
+
+            int currentPage = 0;
+            int itemsPerPage = 10;
+            List<int> filteredIndices = new List<int>();
+
             ListView listView = content.Q<ListView>("audio-list-view");
-            BindListView(listView, propertyName);
+            Label lblPageInfo = content.Q<Label>("lbl-page-info");
+
+            void UpdatePagination()
+            {
+                _serializedConfig.Update();
+                SerializedProperty listProperty = _serializedConfig.FindProperty(propertyName);
+                int totalItems = listProperty.arraySize;
+
+                filteredIndices.Clear();
+
+                // Build filtered list
+                for (int i = 0; i < totalItems; i++)
+                {
+                    if (string.IsNullOrEmpty(currentSearchText))
+                    {
+                        filteredIndices.Add(i);
+                    }
+                    else
+                    {
+                        SerializedProperty itemProp = listProperty.GetArrayElementAtIndex(i);
+                        SerializedProperty idProp = itemProp.FindPropertyRelative("audioID");
+                        string id = idProp != null ? idProp.stringValue : "";
+                        if (id.ToLowerInvariant().Contains(currentSearchText))
+                        {
+                            filteredIndices.Add(i);
+                        }
+                    }
+                }
+
+                int totalFiltered = filteredIndices.Count;
+                int totalPages = Mathf.Max(1, Mathf.CeilToInt((float)totalFiltered / itemsPerPage));
+
+                if (currentPage >= totalPages) currentPage = totalPages - 1;
+                if (currentPage < 0) currentPage = 0;
+
+                if (lblPageInfo != null)
+                {
+                    lblPageInfo.text = $"Page {currentPage + 1} of {totalPages} (Total: {totalItems})";
+                }
+
+                // Get indices for current page
+                var pageIndices = filteredIndices.Skip(currentPage * itemsPerPage).Take(itemsPerPage).ToList();
+                
+                // Set the list view items source to our small list of indices
+                listView.itemsSource = pageIndices;
+                listView.RefreshItems();
+            }
+
+            if (searchField != null)
+            {
+                searchField.RegisterValueChangedCallback(evt =>
+                {
+                    currentSearchText = evt.newValue?.ToLowerInvariant() ?? "";
+                    currentPage = 0; // Reset to page 1 on search
+                    UpdatePagination();
+                });
+            }
+
+            // Pagination Controls
+            var btnPrev = content.Q<Button>("btn-prev-page");
+            var btnNext = content.Q<Button>("btn-next-page");
+            var btnAdd = content.Q<Button>("btn-add-item");
+            var btnRemove = content.Q<Button>("btn-remove-item");
+
+            if (btnPrev != null)
+            {
+                btnPrev.clicked += () =>
+                {
+                    if (currentPage > 0)
+                    {
+                        currentPage--;
+                        UpdatePagination();
+                    }
+                };
+            }
+
+            if (btnNext != null)
+            {
+                btnNext.clicked += () =>
+                {
+                    int totalPages = Mathf.Max(1, Mathf.CeilToInt((float)filteredIndices.Count / itemsPerPage));
+                    if (currentPage < totalPages - 1)
+                    {
+                        currentPage++;
+                        UpdatePagination();
+                    }
+                };
+            }
+
+            if (btnAdd != null)
+            {
+                btnAdd.clicked += () =>
+                {
+                    SerializedProperty listProperty = _serializedConfig.FindProperty(propertyName);
+                    listProperty.arraySize++;
+                    _serializedConfig.ApplyModifiedProperties();
+                    
+                    // Jump to last page
+                    currentSearchText = "";
+                    if (searchField != null) searchField.value = "";
+                    
+                    int newTotal = listProperty.arraySize;
+                    currentPage = Mathf.Max(0, Mathf.CeilToInt((float)newTotal / itemsPerPage) - 1);
+                    
+                    UpdatePagination();
+                    
+                    // Scroll to bottom
+                    listView.ScrollToItem(-1);
+                };
+            }
+
+            if (btnRemove != null)
+            {
+                btnRemove.clicked += () =>
+                {
+                    if (listView.selectedIndex >= 0 && listView.selectedIndex < listView.itemsSource.Count)
+                    {
+                        int realIndex = (int)listView.itemsSource[listView.selectedIndex];
+                        SerializedProperty listProperty = _serializedConfig.FindProperty(propertyName);
+                        listProperty.DeleteArrayElementAtIndex(realIndex);
+                        _serializedConfig.ApplyModifiedProperties();
+                        
+                        // Clear foldout state
+                        if (foldoutStates.ContainsKey(realIndex)) foldoutStates.Remove(realIndex);
+                        
+                        UpdatePagination();
+                    }
+                };
+            }
+
+            BindListView(listView, propertyName, foldoutStates, (realIndex) => 
+            {
+                SerializedProperty listProp = _serializedConfig.FindProperty(propertyName);
+                listProp.DeleteArrayElementAtIndex(realIndex);
+                _serializedConfig.ApplyModifiedProperties();
+                if (foldoutStates.ContainsKey(realIndex)) foldoutStates.Remove(realIndex);
+                UpdatePagination();
+            });
+
+            // Initial load
+            UpdatePagination();
+
+            // Wire Collapse All button
+            var btnCollapse = content.Q<Button>("btn-collapse-all");
+            if (btnCollapse != null)
+            {
+                btnCollapse.clicked += () =>
+                {
+                    foldoutStates.Clear(); // all keys missing → default false
+                    listView?.RefreshItems();
+                };
+            }
+
+            // Wire Expand All button
+            var btnExpand = content.Q<Button>("btn-expand-all");
+            if (btnExpand != null)
+            {
+                btnExpand.clicked += () =>
+                {
+                    SerializedProperty prop = _serializedConfig.FindProperty(propertyName);
+                    int count = prop?.arraySize ?? 0;
+                    for (int i = 0; i < count; i++) foldoutStates[i] = true;
+                    listView?.RefreshItems();
+                };
+            }
+
+            // Wire Delete All button
+            var btnDeleteAll = content.Q<Button>("btn-delete-all");
+            if (btnDeleteAll != null)
+            {
+                btnDeleteAll.clicked += () =>
+                {
+                    if (EditorUtility.DisplayDialog("Delete All Audios", "Are you sure you want to delete ALL audio entries in this library? This cannot be undone.", "Yes, Delete All", "Cancel"))
+                    {
+                        SerializedProperty prop = _serializedConfig.FindProperty(propertyName);
+                        prop.ClearArray();
+                        _serializedConfig.ApplyModifiedProperties();
+                        foldoutStates.Clear();
+                        currentPage = 0;
+                        UpdatePagination();
+                    }
+                };
+            }
 
             content.Bind(_serializedConfig);
             _mainContent.Add(content);
@@ -370,15 +592,12 @@ namespace SignalAudioManagerUnity.Editor.UI
             
                     if (pdfGuids.Length > 0)
                     {
-                        string relativePath = AssetDatabase.GUIDToAssetPath(pdfGuids[0]);
-                        
-                        string absolutePath = System.IO.Path.GetFullPath(relativePath);
-                        
-                        EditorUtility.OpenWithDefaultApp(absolutePath);
+                        string path = AssetDatabase.GUIDToAssetPath(pdfGuids[0]);
+                        Application.OpenURL("file://" + System.IO.Path.GetFullPath(path));
                     }
                     else
                     {
-                        EditorUtility.DisplayDialog("Error", "Documentation PDF not found in the project.", "OK");
+                        Debug.LogError("Signal Audio Manager Documentation PDF not found!");
                     }
                 };
             }
@@ -548,11 +767,68 @@ namespace SignalAudioManagerUnity.Editor.UI
             }
         }
 
-        private void BindListView(ListView listView, string propertyName)
+        private void ImportAudioClips(string folderPath, string prefix, string targetProperty)
+        {
+            if (string.IsNullOrEmpty(folderPath) || string.IsNullOrEmpty(prefix)) return;
+
+            string[] guids = AssetDatabase.FindAssets("t:AudioClip", new[] { folderPath });
+            
+            _serializedConfig.Update();
+            SoundManagerSO data = _serializedConfig.targetObject as SoundManagerSO;
+            
+            var targetList = targetProperty == "musicDatabase" ? data.musicDatabase : data.sfxDatabase;
+            
+            int clipsAdded = 0;
+            int clipsUpdated = 0;
+
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+                
+                if (clip != null)
+                {
+                    string filename = System.IO.Path.GetFileNameWithoutExtension(path);
+                    
+                    if (!filename.StartsWith(prefix)) continue;
+
+                    string audioID = filename.Substring(prefix.Length);
+
+                    AudioEntry existingEntry = targetList.Find(entry => entry.audioID == audioID);
+                    if (existingEntry != null)
+                    {
+                        if (!existingEntry.audioClips.Contains(clip))
+                        {
+                            existingEntry.audioClips.Add(clip);
+                            clipsUpdated++;
+                        }
+                    }
+                    else
+                    {
+                        AudioEntry newEntry = new AudioEntry { audioID = audioID };
+                        newEntry.audioClips.Add(clip);
+                        targetList.Add(newEntry);
+                        clipsAdded++;
+                    }
+                }
+            }
+
+            if (clipsAdded > 0 || clipsUpdated > 0)
+            {
+                EditorUtility.SetDirty(data);
+                _serializedConfig.Update();
+                EditorUtility.DisplayDialog("Import Successful!", $"✓ Added {clipsAdded} new entries\n✓ Updated {clipsUpdated} existing entries", "OK");
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("No New Clips Found", $"No new audio clips starting with '{prefix}' were found in the selected folder.", "OK");
+            }
+        }
+
+        private void BindListView(ListView listView, string propertyName, Dictionary<int, bool> foldoutStates = null, System.Action<int> onDelete = null)
         {
             SerializedProperty listProperty = _serializedConfig.FindProperty(propertyName);
-            listView.bindingPath = propertyName;
-
+            
             string[] itemGuids = AssetDatabase.FindAssets("t:VisualTreeAsset AudioEntryItem");
             if (itemGuids.Length == 0) return;
 
@@ -568,15 +844,15 @@ namespace SignalAudioManagerUnity.Editor.UI
                 {
                     playBtn.clicked += () =>
                     {
-                        if (playBtn.userData is int idx)
+                        if (playBtn.userData is int realIdx)
                         {
                             _serializedConfig.ApplyModifiedProperties();
                             SoundManagerSO data = _serializedConfig.targetObject as SoundManagerSO;
                             var targetList = propertyName == "musicDatabase" ? data.musicDatabase : data.sfxDatabase;
                             
-                            if (idx >= 0 && idx < targetList.Count)
+                            if (realIdx >= 0 && realIdx < targetList.Count)
                             {
-                                PlayPreview(targetList[idx]);
+                                PlayPreview(targetList[realIdx]);
                             }
                         }
                     };
@@ -589,17 +865,43 @@ namespace SignalAudioManagerUnity.Editor.UI
                         if (_previewSource != null) _previewSource.Stop();
                     };
                 }
+                Button deleteBtn = element.Q<Button>("btn-delete");
+                if (deleteBtn != null)
+                {
+                    deleteBtn.clicked += () =>
+                    {
+                        if (deleteBtn.userData is int realIdx)
+                        {
+                            if (EditorUtility.DisplayDialog("Delete Audio", "Are you sure you want to delete this audio entry?", "Yes", "No"))
+                            {
+                                onDelete?.Invoke(realIdx);
+                            }
+                        }
+                    };
+                }
                 return element;
             };
 
-            listView.bindItem = (element, index) =>
+            listView.bindItem = (element, pageIndex) =>
             {
-                if (index < 0 || index >= listProperty.arraySize) return;
+                // Our itemsSource is a List<int> containing the real indices
+                if (pageIndex < 0 || pageIndex >= listView.itemsSource.Count) return;
+                
+                int realIndex = (int)listView.itemsSource[pageIndex];
 
-                SerializedProperty itemProperty = listProperty.GetArrayElementAtIndex(index);
+                if (realIndex < 0 || realIndex >= listProperty.arraySize) return;
+
+                SerializedProperty itemProperty = listProperty.GetArrayElementAtIndex(realIndex);
 
                 var idField = element.Q<TextField>("audio-id-field");
                 idField?.BindProperty(itemProperty.FindPropertyRelative("audioID"));
+
+                // Force white text
+                if (idField != null)
+                {
+                    var textInput = idField.Q<VisualElement>(className: "unity-base-text-field__input");
+                    if (textInput != null) textInput.style.color = Color.white;
+                }
 
                 var clipsField = element.Q<PropertyField>("audio-clips-field");
                 clipsField?.BindProperty(itemProperty.FindPropertyRelative("audioClips"));
@@ -617,9 +919,28 @@ namespace SignalAudioManagerUnity.Editor.UI
                 maxPitchField?.BindProperty(itemProperty.FindPropertyRelative("maxPitch"));
 
                 var playBtn = element.Q<Button>("btn-play");
-                if (playBtn != null) playBtn.userData = index;
+                if (playBtn != null) playBtn.userData = realIndex;
+                var deleteBtn = element.Q<Button>("btn-delete");
+                if (deleteBtn != null) deleteBtn.userData = realIndex;
 
-                // --- NOVO SISTEMA DE BANNER DE ERRO ---
+                // Restore foldout state
+                var foldout = element.Q<Foldout>();
+                if (foldout != null)
+                {
+                    if (foldout.userData is EventCallback<ChangeEvent<bool>> prevCb)
+                        foldout.UnregisterValueChangedCallback(prevCb);
+
+                    bool isExpanded = foldoutStates != null && foldoutStates.TryGetValue(realIndex, out bool saved) ? saved : false;
+                    foldout.SetValueWithoutNotify(isExpanded);
+
+                    EventCallback<ChangeEvent<bool>> cb = evt =>
+                    {
+                        if (foldoutStates != null) foldoutStates[realIndex] = evt.newValue;
+                    };
+                    foldout.userData = cb;
+                    foldout.RegisterValueChangedCallback(cb);
+                }
+
                 var errorContainer = element.Q<VisualElement>("error-container");
                 Label errorLabel = null;
 
@@ -628,16 +949,12 @@ namespace SignalAudioManagerUnity.Editor.UI
                     errorContainer = new VisualElement { name = "error-container" };
                     errorContainer.style.flexDirection = FlexDirection.Row;
                     errorContainer.style.alignItems = Align.Center;
-                    errorContainer.style.backgroundColor = new Color(0.25f, 0.08f, 0.08f, 0.9f); 
+                    errorContainer.style.backgroundColor = new Color(0.25f, 0.08f, 0.08f, 0.9f);
                     errorContainer.style.paddingTop = 6;
                     errorContainer.style.paddingBottom = 6;
                     errorContainer.style.paddingLeft = 10;
                     errorContainer.style.paddingRight = 10;
                     errorContainer.style.marginTop = 10;
-                    errorContainer.style.borderBottomLeftRadius = 6;
-                    errorContainer.style.borderBottomRightRadius = 6;
-                    errorContainer.style.borderTopRightRadius = 6;
-                    errorContainer.style.borderTopLeftRadius = 6;
                     errorContainer.style.borderLeftWidth = 3;
                     errorContainer.style.borderLeftColor = new Color(1f, 0.3f, 0.3f);
                     errorContainer.style.display = DisplayStyle.None;
@@ -656,7 +973,7 @@ namespace SignalAudioManagerUnity.Editor.UI
 
                     errorContainer.Add(icon);
                     errorContainer.Add(errorLabel);
-                    
+
                     element.Insert(0, errorContainer);
                 }
                 else
@@ -670,7 +987,7 @@ namespace SignalAudioManagerUnity.Editor.UI
                     {
                         if (itemProperty == null || itemProperty.serializedObject == null) return;
                         
-                        if (index >= listProperty.arraySize) return;
+                        if (realIndex >= listProperty.arraySize) return;
 
                         itemProperty.serializedObject.Update();
                         
@@ -718,7 +1035,7 @@ namespace SignalAudioManagerUnity.Editor.UI
                             if (idField != null)
                             {
                                 var textInput = idField.Q<VisualElement>(className: "unity-base-text-field__input");
-                                if (textInput != null) textInput.style.color = StyleKeyword.Null;
+                                if (textInput != null) textInput.style.color = Color.white;
                             }
                         }
                     }
@@ -729,11 +1046,24 @@ namespace SignalAudioManagerUnity.Editor.UI
                 }
 
                 ValidateEntry();
-                element.schedule.Execute(ValidateEntry).Every(250);
+
+                if (element.userData is IVisualElementScheduledItem oldSchedule)
+                {
+                    oldSchedule.Pause();
+                }
+
+                IVisualElementScheduledItem scheduledValidation = element.schedule.Execute(ValidateEntry).Every(250);
+                element.userData = scheduledValidation;
+                
+                element.RegisterCallback<DetachFromPanelEvent>(_ => 
+                {
+                    if (element.userData is IVisualElementScheduledItem sched)
+                        sched.Pause();
+                });
             };
         }
 
-        private void PlayPreview(AudioEntry entry)
+private void PlayPreview(AudioEntry entry)
         {
             if (_previewSource == null || entry == null) return;
             _previewSource.Stop();

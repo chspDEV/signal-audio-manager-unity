@@ -2,6 +2,31 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <ui:VisualElement class="library-container">
         <ui:Label name="library-title" text="Audio Library" class="section-header" />
-        <ui:ListView name="audio-list-view" class="audio-list-view" virtualization-method="DynamicHeight" show-add-remove-footer="true" reorderable="true" />
+
+        <!-- Toolbar: search + collapse/expand buttons -->
+        <ui:VisualElement class="library-toolbar">
+            <uie:ToolbarSearchField name="audio-search-field" class="library-search" />
+            <ui:VisualElement class="library-toolbar-actions">
+                <ui:Button name="btn-collapse-all" text="⊟ COLLAPSE" class="toolbar-action-btn" />
+                <ui:Button name="btn-expand-all"   text="⊞ EXPAND" class="toolbar-action-btn" />
+                <ui:Button name="btn-delete-all"   text="✖ DELETE ALL" class="toolbar-action-btn delete-all-btn" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:ListView name="audio-list-view" class="audio-list-view" virtualization-method="DynamicHeight" />
+
+        <!-- Pagination Footer -->
+        <ui:VisualElement class="pagination-footer">
+            <ui:VisualElement class="pagination-footer-left">
+                <ui:Button name="btn-add-item" text="+" class="pagination-btn pagination-btn-add" />
+                <ui:Button name="btn-remove-item" text="-" class="pagination-btn pagination-btn-remove" />
+            </ui:VisualElement>
+            
+            <ui:VisualElement class="pagination-footer-right">
+                <ui:Button name="btn-prev-page" text="&lt;" class="pagination-btn" />
+                <ui:Label name="lbl-page-info" text="Page 1 of 1" class="pagination-label" />
+                <ui:Button name="btn-next-page" text="&gt;" class="pagination-btn" />
+            </ui:VisualElement>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -1,258 +1,489 @@
 /* ==============================================================================
- * SIGNAL AUDIO MANAGER - MASTER STYLE SHEET (UI Toolkit)
+ * SIGNAL AUDIO MANAGER — MASTER STYLE SHEET (UI Toolkit)
+ * Design Language: Minimalist · Black · Square · Purple Accent
  * ==============================================================================*/
 
-/* --- 1. MAIN --- */
+/* ============================================================
+ * 1. ROOT LAYOUT
+ * ============================================================*/
 .dashboard-container {
     flex-grow: 1;
-    flex-direction: row; 
-    background-color: var(--unity-colors-window-background);
+    flex-direction: row;
+    background-color: #0a0a0a;
 }
 
 .sidebar {
-    width: 220px; 
-    min-width: 220px;
-    background-color: rgba(0, 0, 0, 0.15); 
+    width: 200px;
+    min-width: 180px;
+    max-width: 240px;
+    background-color: #0d0d0d;
     border-right-width: 1px;
-    border-right-color: var(--unity-colors-app_toolbar-border);
-    padding: 15px 10px;
+    border-right-color: rgba(157, 114, 245, 0.15);
+    padding: 14px 8px;
 }
 
 .main-content {
     flex-grow: 1;
-    padding: 20px; 
+    padding: 20px;
+    overflow: hidden;
+    background-color: #0a0a0a;
 }
 
-/* --- 2. TYPOGRAPHY & HEADERS --- */
+/* Scroll view used inside every tab */
+.tab-scroll-view {
+    flex-grow: 1;
+}
+
+/* ============================================================
+ * 2. TYPOGRAPHY & HEADERS
+ * ============================================================*/
 .sidebar-title {
-    font-size: 18px;
+    font-size: 11px;
     -unity-font-style: bold;
-    color: #9d72f5; 
+    color: #9d72f5;
     -unity-text-align: middle-center;
-    margin-bottom: 25px;
-    letter-spacing: 1px;
+    margin-bottom: 18px;
+    letter-spacing: 3px;
+    padding-bottom: 12px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(157, 114, 245, 0.2);
 }
 
 .section-header {
-    font-size: 16px;
+    font-size: 10px;
     -unity-font-style: bold;
-    color: var(--unity-colors-label-text);
-    margin-bottom: 15px;
+    color: #9d72f5;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
     border-bottom-width: 1px;
-    border-bottom-color: var(--unity-colors-app_toolbar-border);
-    padding-bottom: 5px;
+    border-bottom-color: rgba(157, 114, 245, 0.18);
+    padding-bottom: 7px;
 }
 
-/* --- 3. SIDE BAR --- */
+/* ============================================================
+ * 3. SIDEBAR BUTTONS
+ * ============================================================*/
 .sidebar-btn {
-    height: 40px;
+    height: 36px;
     -unity-text-align: middle-left;
-    padding-left: 15px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.03); 
-    border-width: 1px;
-    border-color: rgba(255, 255, 255, 0.02); 
-    border-left-width: 4px;
+    padding-left: 12px;
+    margin-bottom: 2px;
+    border-radius: 0;
+    background-color: transparent;
+    border-width: 0;
+    border-left-width: 2px;
     border-left-color: transparent;
-    font-size: 13px;
-    color: var(--unity-colors-label-text);
-    transition-duration: 0.2s;
+    font-size: 12px;
+    color: rgba(232, 232, 232, 0.5);
     flex-direction: row;
     align-items: center;
+    transition-duration: 0.12s;
 }
 
 .sidebar-btn:hover {
-    background-color: rgba(255, 255, 255, 0.08); 
+    background-color: rgba(157, 114, 245, 0.07);
+    color: rgba(232, 232, 232, 0.85);
+    border-left-color: rgba(157, 114, 245, 0.35);
 }
 
 .sidebar-btn-active {
-    background-color: #3b2363; 
-    border-color: #4a2b7a;
-    border-left-color: #9d72f5; 
-    color: #ffffff;
+    background-color: rgba(157, 114, 245, 0.12);
+    border-left-color: #9d72f5;
+    color: #e8e8e8;
     -unity-font-style: bold;
 }
 
+.sidebar-btn-active:hover {
+    background-color: rgba(157, 114, 245, 0.17);
+}
+
+/* Icon inside sidebar button */
 .sidebar-icon {
-    width: 18px;
-    height: 18px;
-    margin-right: 12px;
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
     -unity-background-scale-mode: scale-to-fit;
-    -unity-background-image-tint-color: var(--unity-colors-label-text);
-    opacity: 0.7;
-    transition-duration: 0.2s;
+    -unity-background-image-tint-color: rgba(232, 232, 232, 0.4);
 }
 
 .sidebar-btn:hover .sidebar-icon {
-    opacity: 1;
+    -unity-background-image-tint-color: rgba(232, 232, 232, 0.75);
 }
 
 .sidebar-btn-active .sidebar-icon {
-    -unity-background-image-tint-color: #ffffff;
-    opacity: 1;
+    -unity-background-image-tint-color: #9d72f5;
 }
 
-/* --- 4. CARDS & CONTAINERS (Global Settings, Import Tools, Audio Lines) --- */
+/* ============================================================
+ * 4. CARDS & SECTION CONTAINERS
+ * ============================================================*/
 .section-container {
-    background-color: rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 15px 20px;
-    margin-bottom: 20px;
+    background-color: #111111;
+    border-radius: 0;
+    padding: 14px 16px;
+    margin-bottom: 12px;
     border-width: 1px;
-    border-color: var(--unity-colors-app_toolbar-border);
+    border-color: rgba(255, 255, 255, 0.05);
+    border-left-width: 2px;
+    border-left-color: rgba(157, 114, 245, 0.3);
 }
 
 .audio-entry-card {
-    background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    padding: 12px;
-    margin: 5px 2px;
+    background-color: #111111;
+    border-radius: 0;
+    padding: 10px 12px;
+    margin: 2px 0;
     border-width: 1px;
-    border-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.04);
+    border-left-width: 2px;
+    border-left-color: rgba(157, 114, 245, 0.15);
+    transition-duration: 0.1s;
+}
+
+.audio-entry-card:hover {
+    border-left-color: rgba(157, 114, 245, 0.55);
+    background-color: #161616;
 }
 
 .audio-entry-header {
     flex-direction: row;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 .audio-id-field {
     flex-grow: 1;
-    margin-right: 15px;
-    -unity-font-style: bold;
-}
-
-.sliders-container {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top-width: 1px;
-    border-top-color: rgba(255, 255, 255, 0.05);
-}
-
-/* --- 5. ACTIONS BUTTONS   (Play, Stop, Import) --- */
-.icon-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 4px;
-    -unity-font-style: bold;
-    border-width: 0;
-    transition-duration: 0.15s;
-}
-
-.play-btn {
-    background-color: #5c35a6;
-    color: white;
-}
-
-.play-btn:hover {
-    background-color: #7245c7;
-    scale: 1.05; 
-}
-
-.stop-btn {
-    background-color: #8E3030;
-    color: white;
-    margin-left: 5px;
-}
-
-.stop-btn:hover {
-    background-color: #B33D3D;
-    scale: 1.05;
-}
-
-.setup-btn {
-    font-size: 14px;
-    -unity-font-style: bold;
-    background-color: #5c35a6;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 6px;
-    border-width: 0;
-    transition-duration: 0.2s;
-}
-
-.setup-btn:hover {
-    background-color: #7245c7;
-}
-
-/* --- 6. LIST VIEW & HELP --- */
-.library-container {
-    flex-grow: 1;
-    display: flex;
-}
-
-.audio-list-view {
-    flex-grow: 1;
-    margin-top: 10px;
-    border-radius: 6px;
-    border-width: 1px;
-    border-color: var(--unity-colors-app_toolbar-border);
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.help-text {
-    font-size: 13px;
-    color: var(--unity-colors-label-text);
-    white-space: normal;
-    margin-bottom: 12px;
-    min-height: 20px;
-}
-
-/* --- 7. WELCOME SCREEN --- */
-.welcome-screen {
-    flex-grow: 1;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--unity-colors-window-background);
-    padding: 40px;
-}
-
-.welcome-title {
-    font-size: 24px;
-    -unity-font-style: bold;
-    color: var(--unity-colors-label-text);
-    margin-bottom: 10px;
-}
-
-.welcome-subtitle {
-    font-size: 16px;
-    color: var(--unity-colors-warning-text);
-    margin-bottom: 20px;
-}
-
-.welcome-desc {
-    font-size: 14px;
-    color: var(--unity-colors-label-text);
-    -unity-text-align: middle-center;
-    white-space: normal;
-    width: 80%;
-}
-
-.welcome-path {
-    font-size: 13px;
-    -unity-font-style: italic;
-    color: #4CAF50;
-    margin-top: 5px;
-    margin-bottom: 30px;
-}
-
-.audio-id-field {
-    width: 50%;
-    min-width: 150px;
-    max-width: 250px;
-    margin-right: 15px;
+    min-width: 140px;
+    max-width: 260px;
+    margin-right: 10px;
     flex-shrink: 1;
     -unity-font-style: bold;
 }
 
-.error-icon {
-    width: 16px;
-    height: 16px;
+/* Text inside the Audio ID input → white */
+.audio-id-field > .unity-base-text-field__input,
+.audio-id-field .unity-base-text-field__input {
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.25);
+    border-color: rgba(255, 255, 255, 0.07);
+}
+
+.sliders-container {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top-width: 1px;
+    border-top-color: rgba(255, 255, 255, 0.04);
+}
+
+/* ============================================================
+ * 5. BUTTONS (Play, Stop, Setup, Actions)
+ * ============================================================*/
+.icon-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 0;
+    -unity-font-style: bold;
+    border-width: 0;
+    transition-duration: 0.1s;
+}
+
+.play-btn {
+    background-color: #6b44b8;
+    color: white;
+}
+
+.play-btn:hover {
+    background-color: #7c52cc;
+}
+
+.stop-btn {
+    background-color: #8b2020;
+    color: white;
+    margin-left: 4px;
+}
+
+.stop-btn:hover {
+    background-color: #a82828;
+}
+
+.setup-btn {
+    font-size: 12px;
+    -unity-font-style: bold;
+    background-color: #6b44b8;
+    color: white;
+    padding: 9px 18px;
+    border-radius: 0;
+    border-width: 0;
+    border-bottom-width: 2px;
+    border-bottom-color: #9d72f5;
+    transition-duration: 0.1s;
+    letter-spacing: 0.5px;
+}
+
+.setup-btn:hover {
+    background-color: #7c52cc;
+}
+
+.setup-btn:active {
+    background-color: #5a38a0;
+    border-bottom-color: #7c52cc;
+}
+
+/* ============================================================
+ * 6. LIST VIEW & HELP TEXT
+ * ============================================================*/
+.library-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Toolbar row: search field + action buttons */
+.library-toolbar {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.library-search {
+    flex-grow: 1;
     margin-right: 8px;
-    -unity-background-image-tint-color: #ff4444; 
-    display: none; 
+}
+
+.library-toolbar-actions {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* Small inline action buttons (Collapse / Expand) */
+.toolbar-action-btn {
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: rgba(157, 114, 245, 0.85);
+    background-color: rgba(157, 114, 245, 0.08);
+    border-width: 1px;
+    border-color: rgba(157, 114, 245, 0.25);
+    border-radius: 0;
+    padding: 4px 10px;
+    margin-left: 4px;
+    letter-spacing: 0.5px;
+    transition-duration: 0.1s;
+}
+
+.toolbar-action-btn:hover {
+    background-color: rgba(157, 114, 245, 0.18);
+    color: #9d72f5;
+    border-color: rgba(157, 114, 245, 0.45);
+}
+
+.toolbar-action-btn:active {
+    background-color: rgba(157, 114, 245, 0.28);
+}
+
+.audio-list-view {
+    flex-grow: 1;
+    margin-top: 8px;
+    border-radius: 0;
+    border-width: 1px;
+    border-color: rgba(157, 114, 245, 0.12);
+    background-color: #0d0d0d;
+}
+
+/* ── Override Unity ListView internal elements ─────────────── */
+/* Scroll view container inside ListView */
+.audio-list-view > #unity-content-and-vertical-scroll-container,
+.audio-list-view #unity-content-viewport,
+.audio-list-view #unity-content-container,
+.audio-list-view .unity-scroll-view,
+.audio-list-view .unity-scroll-view__content-and-vertical-scroll-container,
+.audio-list-view .unity-scroll-view__content-viewport,
+.audio-list-view .unity-scroll-view__content-container {
+    background-color: #0d0d0d;
+}
+
+/* Individual list items */
+.audio-list-view .unity-list-view__item,
+.audio-list-view .unity-collection-view__item {
+    background-color: #0d0d0d;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.03);
+    padding: 0;
+}
+
+/* Alternating row colours */
+.audio-list-view .unity-list-view__item:hover,
+.audio-list-view .unity-collection-view__item:hover {
+    background-color: #111111;
+}
+
+/* Add / Remove footer bar (legacy Unity) */
+.audio-list-view .unity-list-view__footer,
+.audio-list-view .unity-footer {
+    background-color: #111111;
+    border-top-width: 1px;
+    border-top-color: rgba(157, 114, 245, 0.12);
+}
+
+/* ── Custom Pagination Footer ────────────────────────────── */
+.pagination-footer {
+    background-color: #111111;
+    border-width: 1px;
+    border-color: rgba(157, 114, 245, 0.12);
+    border-top-width: 0;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 6px;
+}
+
+.pagination-footer-left,
+.pagination-footer-right {
+    flex-direction: row;
+    align-items: center;
+}
+
+.pagination-btn {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    color: #cccccc;
+    font-size: 13px;
+    padding: 3px 9px;
+    margin: 0 2px;
+    min-width: 28px;
+    -unity-font-style: bold;
+}
+
+.pagination-btn:hover {
+    background-color: rgba(157, 114, 245, 0.2);
+    border-color: rgba(157, 114, 245, 0.4);
+    color: #ffffff;
+}
+
+.pagination-btn:active {
+    background-color: rgba(157, 114, 245, 0.4);
+}
+
+.pagination-btn-add { color: #9d72f5; }
+.pagination-btn-remove { color: rgba(255, 100, 100, 0.8); }
+
+.pagination-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+    margin: 0 8px;
+    -unity-text-align: middle-center;
+}
+
+/* Drag-reorder handle */
+.audio-list-view .unity-list-view__reorderable-handle {
+    background-color: #0d0d0d;
+}
+
+/* ── "Size | 0" header row ───────────────────────────────── */
+/* The header container (whole gray bar) */
+.audio-list-view .unity-list-view__size-field,
+.audio-list-view .unity-property-field.unity-list-view__size-field {
+    background-color: #111111;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(157, 114, 245, 0.2);
+    padding: 4px 8px;
+}
+
+/* "Size" label text → purple */
+.audio-list-view .unity-list-view__size-field > .unity-base-field__label,
+.audio-list-view .unity-list-view__size-field .unity-label {
+    color: #9d72f5;
+    -unity-font-style: bold;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+/* Number input (the "0") → purple tinted */
+.audio-list-view .unity-list-view__size-field .unity-integer-field__input,
+.audio-list-view .unity-list-view__size-field .unity-base-field__input {
+    background-color: rgba(157, 114, 245, 0.08);
+    border-color: rgba(157, 114, 245, 0.25);
+    color: #9d72f5;
+    border-radius: 0;
+}
+
+/* "List is empty" label */
+.audio-list-view .unity-list-view__empty-label {
+    color: rgba(157, 114, 245, 0.4);
+    -unity-font-style: italic;
+    -unity-text-align: middle-center;
+}
+
+/* ── Override ToolbarSearchField internal background ─────── */
+.unity-toolbar-search-field > .unity-base-field__input {
+    background-color: #111111;
+    border-color: rgba(255, 255, 255, 0.08);
+    border-radius: 0;
+}
+
+.help-text {
+    font-size: 12px;
+    color: rgba(232, 232, 232, 0.45);
+    white-space: normal;
+    margin-bottom: 10px;
+    min-height: 18px;
+}
+
+/* ============================================================
+ * 7. WELCOME SCREEN
+ * ============================================================*/
+.welcome-screen {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    background-color: #0a0a0a;
+    padding: 40px;
+}
+
+.welcome-title {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: #e8e8e8;
+    margin-bottom: 6px;
+    -unity-text-align: middle-center;
+}
+
+.welcome-subtitle {
+    font-size: 13px;
+    color: rgba(255, 100, 100, 0.9);
+    margin-bottom: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.welcome-desc {
+    font-size: 13px;
+    color: rgba(232, 232, 232, 0.45);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    width: 80%;
+    min-height: 20px;
+}
+
+.welcome-path {
+    font-size: 12px;
+    -unity-font-style: italic;
+    color: #4ec9b0;
+    margin-top: 4px;
+    margin-bottom: 26px;
+    -unity-text-align: middle-center;
+}
+
+/* ============================================================
+ * 8. ERROR STATES
+ * ============================================================*/
+.error-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    -unity-background-image-tint-color: #ff4444;
+    display: none;
 }
 
 .has-error .error-icon {
@@ -263,14 +494,14 @@
     color: #ff4444;
 }
 
-/* ==============================================================================
- * 8. RESPONSIVITY (COLLAPSED MODE)
- * ==============================================================================*/
-
+/* ============================================================
+ * 9. RESPONSIVITY — COLLAPSED SIDEBAR (width < 600px)
+ * ============================================================*/
 .collapsed-mode .sidebar {
-    width: 60px;
-    min-width: 60px;
-    padding: 15px 5px;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    padding: 12px 4px;
     align-items: center;
 }
 
@@ -282,6 +513,16 @@
     padding-left: 0;
     justify-content: center;
     width: 100%;
+    border-left-width: 0;
+    border-bottom-width: 2px;
+    border-bottom-color: transparent;
+    height: 40px;
+    margin-bottom: 4px;
+}
+
+.collapsed-mode .sidebar-btn-active {
+    border-bottom-color: #9d72f5;
+    background-color: rgba(157, 114, 245, 0.12);
 }
 
 .collapsed-mode .sidebar-btn Label {
@@ -290,6 +531,29 @@
 
 .collapsed-mode .sidebar-icon {
     margin-right: 0;
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
+}
+/* ── Delete Buttons ────────────────────────────── */
+.delete-btn {
+    background-color: rgba(200, 50, 50, 0.2);
+    border-color: rgba(200, 50, 50, 0.4);
+    color: #ffaaaa;
+}
+
+.delete-btn:hover {
+    background-color: rgba(255, 80, 80, 0.8);
+    color: #ffffff;
+}
+
+.delete-all-btn {
+    background-color: rgba(200, 50, 50, 0.2);
+    border-color: rgba(200, 50, 50, 0.4);
+    color: #ffaaaa;
+    margin-left: 10px;
+}
+
+.delete-all-btn:hover {
+    background-color: rgba(255, 80, 80, 0.8);
+    color: #ffffff;
 }
