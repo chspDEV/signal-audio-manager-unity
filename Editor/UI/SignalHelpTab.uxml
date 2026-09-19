@@ -2,58 +2,148 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd">
     <ui:ScrollView class="tab-scroll-view">
         <ui:VisualElement class="section-container">
+            
+            <ui:Label text="SIGNAL AUDIO MANAGER - MANUAL" class="section-header" style="font-size: 16px; color: #9d72f5; margin-bottom: 20px;" />
 
-            <ui:Label text="QUICK START" class="section-header" />
-            <ui:Label text="1. Setup Data: Go to the Import Tools tab and drag your audio folders to automatically populate your Music and SFX libraries." class="help-text" />
-            <ui:Label text="2. Play Sounds via Code: Use the clean static API from anywhere in your game:" class="help-text" />
+            <!-- Section 1: Setup & Initialization -->
+            <ui:Foldout text="1. Getting Started &amp; Initialization" class="audio-entry-foldout" value="true" style="margin-bottom: 10px;">
+                <ui:Label text="Signal Audio Manager is designed to be a frictionless, zero-setup system." class="help-text" />
+                
+                <ui:Label text="• Setup Data: Go to the 'Import Tools' tab and drag your audio folders to automatically populate your Music and SFX libraries." class="help-text" />
+                <ui:Label text="• Scene Setup (Auto-Magic): You don't need to drag any prefab into your scenes! Just call the API in your code, and Signal Audio will automatically spawn the manager if it's missing." class="help-text" style="white-space: normal;" />
+            </ui:Foldout>
 
-            <!-- Code block -->
-            <ui:VisualElement style="background-color: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left-width: 2px; border-left-color: #4ec9b0;">
-                <ui:Label text='Signal.PlaySFX("explosion");' style="color: #4ec9b0; -unity-font-style: bold; margin-bottom: 4px;" />
-                <ui:Label text='Signal.PlayMusic("main_theme", 2.0f); // with 2s crossfade' style="color: #4ec9b0; -unity-font-style: bold; white-space: normal;" />
-            </ui:VisualElement>
+            <!-- Section 2: Playing Audio (SFX & UI) -->
+            <ui:Foldout text="2. Playing Sound Effects (2D &amp; 3D)" class="audio-entry-foldout" value="false" style="margin-bottom: 10px;">
+                <ui:Label text="Playing standard 2D sound effects:" class="help-text" />
+                <ui:VisualElement style="background-color: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left-width: 2px; border-left-color: #4ec9b0;">
+                    <ui:Label text='Signal.PlaySFX("explosion");' style="color: #4ec9b0; -unity-font-style: bold;" />
+                </ui:VisualElement>
 
-            <ui:Label text="3. Scene Setup (Auto-Magic): You don't need to drag the Audio_Managers prefab into your scenes. Just call the code above — Signal Audio will automatically spawn the manager if it's missing." class="help-text" style="white-space: normal;" />
+                <ui:Label text="Playing 3D sound effects at a specific position (World Space):" class="help-text" />
+                <ui:VisualElement style="background-color: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left-width: 2px; border-left-color: #4ec9b0;">
+                    <ui:Label text='Signal.PlaySFX("impact", transform.position);' style="color: #4ec9b0; -unity-font-style: bold;" />
+                </ui:VisualElement>
+
+                <ui:Label text="Playing 3D sound attached to a moving object (follows the Transform):" class="help-text" />
+                <ui:VisualElement style="background-color: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left-width: 2px; border-left-color: #4ec9b0;">
+                    <ui:Label text='Signal.PlaySFX("engine_loop", this.transform);' style="color: #4ec9b0; -unity-font-style: bold;" />
+                </ui:VisualElement>
+
+                <ui:Label text="Playing UI Sounds (Always unpaused, pure 2D):" class="help-text" />
+                <ui:VisualElement style="background-color: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left-width: 2px; border-left-color: #4ec9b0;">
+                    <ui:Label text='Signal.PlayUI("btn_click");' style="color: #4ec9b0; -unity-font-style: bold;" />
+                </ui:VisualElement>
+            </ui:Foldout>
+
+            <!-- Section 3: Music & Crossfades -->
+            <ui:Foldout text="3. Music &amp; Crossfades" class="audio-entry-foldout" value="false" style="margin-bottom: 10px;">
+                <ui:Label text="Playing and crossfading music is extremely simple. The system automatically handles fading out the old track and fading in the new one." class="help-text" />
+                
+                <ui:Label text="Crossfade to a new track (e.g. 2 seconds fade):" class="help-text" />
+                <ui:VisualElement style="background-color: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left-width: 2px; border-left-color: #4ec9b0;">
+                    <ui:Label text='Signal.PlayMusic("boss_theme", 2.0f);' style="color: #4ec9b0; -unity-font-style: bold;" />
+                </ui:VisualElement>
+
+                <ui:Label text="Stop music with a fade out:" class="help-text" />
+                <ui:VisualElement style="background-color: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left-width: 2px; border-left-color: #4ec9b0;">
+                    <ui:Label text='Signal.StopMusic(1.5f); // 1.5s fade out' style="color: #4ec9b0; -unity-font-style: bold;" />
+                </ui:VisualElement>
+            </ui:Foldout>
+
+            <!-- Section 4: Global Controls -->
+            <ui:Foldout text="4. Global Controls &amp; Settings" class="audio-entry-foldout" value="false" style="margin-bottom: 10px;">
+                <ui:Label text="You can easily control the global volumes via code. This is perfect for your Options Menu sliders." class="help-text" />
+                
+                <ui:VisualElement style="background-color: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left-width: 2px; border-left-color: #4ec9b0;">
+                    <ui:Label text='Signal.SetMasterVolume(0.8f); // 0.0 to 1.0' style="color: #4ec9b0; -unity-font-style: bold; margin-bottom: 4px;" />
+                    <ui:Label text='Signal.SetMusicVolume(0.5f);' style="color: #4ec9b0; -unity-font-style: bold; margin-bottom: 4px;" />
+                    <ui:Label text='Signal.SetSFXVolume(1.0f);' style="color: #4ec9b0; -unity-font-style: bold;" />
+                </ui:VisualElement>
+
+                <ui:Label text="You can also toggle mute states:" class="help-text" />
+                <ui:VisualElement style="background-color: #0d0d0d; padding: 12px; margin-bottom: 16px; border-left-width: 2px; border-left-color: #4ec9b0;">
+                    <ui:Label text='Signal.MuteAll(true);' style="color: #4ec9b0; -unity-font-style: bold;" />
+                </ui:VisualElement>
+            </ui:Foldout>
 
             <!-- API Cheat Sheet -->
-            <ui:Label text="API CHEAT SHEET" class="section-header" style="margin-top: 24px;" />
-            <ui:VisualElement style="border-width: 1px; border-color: rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 20px;">
-
-                <!-- Header row -->
+            <ui:Label text="API CHEAT SHEET (FULL REFERENCE)" class="section-header" style="margin-top: 24px;" />
+            <ui:VisualElement style="border-width: 1px; border-color: rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 40px;">
                 <ui:VisualElement style="flex-direction: row; background-color: #161616; padding: 8px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.06);">
                     <ui:Label text="Command" style="flex-grow: 1; width: 50%; color: #9d72f5; -unity-font-style: bold; font-size: 10px; letter-spacing: 1px;" />
                     <ui:Label text="Description" style="flex-grow: 1; width: 50%; color: #9d72f5; -unity-font-style: bold; font-size: 10px; letter-spacing: 1px;" />
                 </ui:VisualElement>
-
+                
+                <!-- Playback -->
                 <ui:VisualElement style="flex-direction: row; background-color: #0d0d0d; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
                     <ui:Label text="Signal.PlaySFX(id)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
                     <ui:Label text="Plays a 2D sound effect." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
                 </ui:VisualElement>
-
                 <ui:VisualElement style="flex-direction: row; background-color: #111111; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
                     <ui:Label text="Signal.PlaySFX(id, Vector3)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
                     <ui:Label text="Plays a 3D sound at a specific world position." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
                 </ui:VisualElement>
-
                 <ui:VisualElement style="flex-direction: row; background-color: #0d0d0d; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
                     <ui:Label text="Signal.PlaySFX(id, Transform)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
                     <ui:Label text="Plays a 3D sound that follows a moving object." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
                 </ui:VisualElement>
-
                 <ui:VisualElement style="flex-direction: row; background-color: #111111; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.PlaySFXDelayed(id, delay)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Plays a sound effect after a specific delay in seconds." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; background-color: #0d0d0d; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.PlaySFXLoop(id, Transform)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Plays a looping 3D sound. Returns instanceId to stop it later." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; background-color: #111111; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.PlayUI(id)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Plays a pure 2D sound for menus / UI." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; background-color: #0d0d0d; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
                     <ui:Label text="Signal.PlayMusic(id, fade)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
                     <ui:Label text="Crossfades smoothly to a new music track." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
                 </ui:VisualElement>
-
-                <ui:VisualElement style="flex-direction: row; background-color: #0d0d0d; padding: 9px 12px;">
-                    <ui:Label text="Signal.PlayUI(id)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
-                    <ui:Label text="Plays a clean 2D sound for menus / UI." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                
+                <!-- Stopping & Pausing -->
+                <ui:VisualElement style="flex-direction: row; background-color: #111111; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.StopMusic()" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Stops the currently playing music smoothly." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
                 </ui:VisualElement>
-
-            </ui:VisualElement>
-
-            <ui:VisualElement style="align-items: center; margin-top: 8px;">
-                <ui:Button name="btn-open-pdf" text="OPEN FULL DOCUMENTATION" class="setup-btn" style="padding: 11px 24px;" />
+                <ui:VisualElement style="flex-direction: row; background-color: #0d0d0d; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.PauseMusic() / ResumeMusic()" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Pauses or resumes the music track." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; background-color: #111111; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.StopInstance(instanceId)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Stops a specific audio instance (e.g. a loop)." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; background-color: #0d0d0d; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.PauseInstance(instanceId)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Pauses a specific audio instance." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; background-color: #111111; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.ResumeInstance(instanceId)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Resumes a specific audio instance." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                
+                <!-- Volumes -->
+                <ui:VisualElement style="flex-direction: row; background-color: #0d0d0d; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.SetMasterVolume(vol)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Sets Master Audio Mixer volume (0.0 to 1.0)." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; background-color: #111111; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.SetMusicVolume(vol)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Sets Music Audio Mixer volume (0.0 to 1.0)." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; background-color: #0d0d0d; padding: 9px 12px; border-bottom-width: 1px; border-bottom-color: rgba(255,255,255,0.04);">
+                    <ui:Label text="Signal.SetSFXVolume(vol)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Sets SFX Audio Mixer volume (0.0 to 1.0)." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; background-color: #111111; padding: 9px 12px;">
+                    <ui:Label text="Signal.SetUIVolume(vol)" style="flex-grow: 1; width: 50%; color: #dcdcaa; -unity-font-style: italic;" />
+                    <ui:Label text="Sets UI Audio Mixer volume (0.0 to 1.0)." style="flex-grow: 1; width: 50%; color: rgba(232,232,232,0.6); white-space: normal;" />
+                </ui:VisualElement>
             </ui:VisualElement>
 
         </ui:VisualElement>

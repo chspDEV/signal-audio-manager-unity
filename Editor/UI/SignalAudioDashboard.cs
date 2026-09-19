@@ -583,24 +583,6 @@ namespace SignalAudioManagerUnity.Editor.UI
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(AssetDatabase.GUIDToAssetPath(guids[0]));
             var content = visualTree.Instantiate();
 
-            Button pdfBtn = content.Q<Button>("btn-open-pdf");
-            if (pdfBtn != null)
-            {
-                pdfBtn.clicked += () => 
-                {
-                    string[] pdfGuids = AssetDatabase.FindAssets("Signal_Audio_Manager_Doc");
-            
-                    if (pdfGuids.Length > 0)
-                    {
-                        string path = AssetDatabase.GUIDToAssetPath(pdfGuids[0]);
-                        Application.OpenURL("file://" + System.IO.Path.GetFullPath(path));
-                    }
-                    else
-                    {
-                        Debug.LogError("Signal Audio Manager Documentation PDF not found!");
-                    }
-                };
-            }
 
             _mainContent.Add(content);
         }
