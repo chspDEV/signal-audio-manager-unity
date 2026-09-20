@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace SignalAudioManagerUnity.Components
 {
-    [RequireComponent(typeof(Collider))]
-    public class AmbientTrigger : MonoBehaviour
+    [RequireComponent(typeof(Collider2D))]
+    public class AmbientTrigger2D : MonoBehaviour
     {
         [Header("Trigger Configuration")]
         [Tooltip("The ambient type to transition to when entering this trigger.")]
@@ -36,14 +36,14 @@ namespace SignalAudioManagerUnity.Components
 
         private void Start()
         {
-            var col = GetComponent<Collider>();
+            var col = GetComponent<Collider2D>();
             if (!col.isTrigger)
             {
                 col.isTrigger = true;
             }
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
             if (triggerOnEnter && other.CompareTag(playerTag))
             {
@@ -51,7 +51,7 @@ namespace SignalAudioManagerUnity.Components
             }
         }
 
-        private void OnTriggerExit(Collider other)
+        private void OnTriggerExit2D(Collider2D other)
         {
             if (triggerOnExit && other.CompareTag(playerTag))
             {
@@ -62,23 +62,24 @@ namespace SignalAudioManagerUnity.Components
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            var col = GetComponent<Collider>();
+            var col = GetComponent<Collider2D>();
             if (col == null) return;
 
             Gizmos.color = gizmoColor;
             Gizmos.matrix = transform.localToWorldMatrix;
 
-            if (col is BoxCollider box)
+            if (col is BoxCollider2D box)
             {
-                Gizmos.DrawCube(box.center, box.size);
+                // In 2D, offset center is local
+                Gizmos.DrawCube(box.offset, box.size);
                 Gizmos.color = new Color(gizmoColor.r, gizmoColor.g, gizmoColor.b, 1f);
-                Gizmos.DrawWireCube(box.center, box.size);
+                Gizmos.DrawWireCube(box.offset, box.size);
             }
-            else if (col is SphereCollider sphere)
+            else if (col is CircleCollider2D circle)
             {
-                Gizmos.DrawSphere(sphere.center, sphere.radius);
+                Gizmos.DrawSphere((Vector3)circle.offset, circle.radius);
                 Gizmos.color = new Color(gizmoColor.r, gizmoColor.g, gizmoColor.b, 1f);
-                Gizmos.DrawWireSphere(sphere.center, sphere.radius);
+                Gizmos.DrawWireSphere((Vector3)circle.offset, circle.radius);
             }
         }
 #endif

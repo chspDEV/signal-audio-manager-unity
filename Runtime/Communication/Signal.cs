@@ -57,7 +57,7 @@ namespace SignalAudioManagerUnity.Communication
         /// <param name="audioID">The unique ID of the audio entry to play.</param>
         /// <param name="volumeMultiplier">Dynamically scales the volume (1f is default).</param>
         /// <param name="pitchMultiplier">Dynamically scales the pitch (1f is default).</param>
-        public static long PlaySFX(string audioID, float volumeMultiplier = 1f, float pitchMultiplier = 1f)
+        public static long PlaySFX(string audioID, float volumeMultiplier = 1f, float pitchMultiplier = 1f, bool triggerDucking = false, float duckingDuration = 1f)
         {
             EnsureManagerExists();
             long id = _nextInstanceId++;
@@ -67,7 +67,9 @@ namespace SignalAudioManagerUnity.Communication
                 AudioID = audioID,
                 VolumeMultiplier = volumeMultiplier,
                 PitchMultiplier = pitchMultiplier,
-                InstanceID = id
+                InstanceID = id,
+                TriggerDucking = triggerDucking,
+                DuckingDuration = duckingDuration
             };
             AudioEventChannel.RaisePlayAudio(config);
             return id;
@@ -76,7 +78,7 @@ namespace SignalAudioManagerUnity.Communication
         /// <summary>
         /// Plays a 3D sound effect at a specific world position.
         /// </summary>
-        public static long PlaySFX(string audioID, Vector3 position, float volumeMultiplier = 1f, float pitchMultiplier = 1f)
+        public static long PlaySFX(string audioID, Vector3 position, float volumeMultiplier = 1f, float pitchMultiplier = 1f, bool triggerDucking = false, float duckingDuration = 1f)
         {
             EnsureManagerExists();
             long id = _nextInstanceId++;
@@ -87,7 +89,9 @@ namespace SignalAudioManagerUnity.Communication
                 Position = position,
                 VolumeMultiplier = volumeMultiplier,
                 PitchMultiplier = pitchMultiplier,
-                InstanceID = id
+                InstanceID = id,
+                TriggerDucking = triggerDucking,
+                DuckingDuration = duckingDuration
             };
             AudioEventChannel.RaisePlayAudio(config);
             return id;
@@ -96,7 +100,7 @@ namespace SignalAudioManagerUnity.Communication
         /// <summary>
         /// Plays a 3D sound effect attached to a specific transform (follows the object).
         /// </summary>
-        public static long PlaySFX(string audioID, Transform target, float volumeMultiplier = 1f, float pitchMultiplier = 1f)
+        public static long PlaySFX(string audioID, Transform target, float volumeMultiplier = 1f, float pitchMultiplier = 1f, bool triggerDucking = false, float duckingDuration = 1f)
         {
             EnsureManagerExists();
             long id = _nextInstanceId++;
@@ -107,7 +111,9 @@ namespace SignalAudioManagerUnity.Communication
                 TargetTransform = target,
                 VolumeMultiplier = volumeMultiplier,
                 PitchMultiplier = pitchMultiplier,
-                InstanceID = id
+                InstanceID = id,
+                TriggerDucking = triggerDucking,
+                DuckingDuration = duckingDuration
             };
             AudioEventChannel.RaisePlayAudio(config);
             return id;
@@ -160,7 +166,7 @@ namespace SignalAudioManagerUnity.Communication
         /// <summary>
         /// Plays a 2D user interface sound effect. Ignores 3D spatialization.
         /// </summary>
-        public static long PlayUI(string audioID, float volumeMultiplier = 1f)
+        public static long PlayUI(string audioID, float volumeMultiplier = 1f, bool triggerDucking = false, float duckingDuration = 1f)
         {
             EnsureManagerExists();
             long id = _nextInstanceId++;
@@ -169,7 +175,9 @@ namespace SignalAudioManagerUnity.Communication
                 Category = AudioCategory.UI, 
                 AudioID = audioID,
                 VolumeMultiplier = volumeMultiplier,
-                InstanceID = id
+                InstanceID = id,
+                TriggerDucking = triggerDucking,
+                DuckingDuration = duckingDuration
             };
             AudioEventChannel.RaisePlayAudio(config);
             return id;

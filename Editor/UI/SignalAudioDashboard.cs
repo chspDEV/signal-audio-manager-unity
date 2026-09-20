@@ -900,6 +900,21 @@ namespace SignalAudioManagerUnity.Editor.UI
                 var maxPitchField = element.Q<PropertyField>("max-pitch-field");
                 maxPitchField?.BindProperty(itemProperty.FindPropertyRelative("maxPitch"));
 
+                var spatialBlendField = element.Q<PropertyField>("spatial-blend-field");
+                spatialBlendField?.BindProperty(itemProperty.FindPropertyRelative("spatialBlend"));
+
+                var dopplerLevelField = element.Q<PropertyField>("doppler-level-field");
+                dopplerLevelField?.BindProperty(itemProperty.FindPropertyRelative("dopplerLevel"));
+
+                var spreadField = element.Q<PropertyField>("spread-field");
+                spreadField?.BindProperty(itemProperty.FindPropertyRelative("spread"));
+
+                var minDistanceField = element.Q<PropertyField>("min-distance-field");
+                minDistanceField?.BindProperty(itemProperty.FindPropertyRelative("minDistance"));
+
+                var maxDistanceField = element.Q<PropertyField>("max-distance-field");
+                maxDistanceField?.BindProperty(itemProperty.FindPropertyRelative("maxDistance"));
+
                 var playBtn = element.Q<Button>("btn-play");
                 if (playBtn != null) playBtn.userData = realIndex;
                 var deleteBtn = element.Q<Button>("btn-delete");

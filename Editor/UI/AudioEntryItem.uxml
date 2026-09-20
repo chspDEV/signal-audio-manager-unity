@@ -18,6 +18,14 @@
                 <uie:PropertyField name="min-pitch-field" label="Min Pitch" />
                 <uie:PropertyField name="max-pitch-field" label="Max Pitch" />
             </ui:VisualElement>
+
+            <ui:VisualElement class="sliders-container">
+                <uie:PropertyField name="spatial-blend-field" label="Spatial Blend" />
+                <uie:PropertyField name="doppler-level-field" label="Doppler Level" />
+                <uie:PropertyField name="spread-field" label="Spread" />
+                <uie:PropertyField name="min-distance-field" label="Min Distance" />
+                <uie:PropertyField name="max-distance-field" label="Max Distance" />
+            </ui:VisualElement>
         </ui:Foldout>
         
     </ui:VisualElement>

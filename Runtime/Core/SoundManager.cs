@@ -24,6 +24,11 @@ namespace SignalAudioManagerUnity.Core
         private List<AudioSource> _musicSources = new List<AudioSource>();
         private AudioSource _activeMusicSource;
         private GameObject _audioHost;
+        
+        // Ducking State
+        private float _currentMusicVolume = 1f;
+        private float _duckingMultiplier = 1f;
+        private Coroutine _duckingCoroutine;
 
         private readonly Dictionary<string, AudioEntry> _musicClips = new Dictionary<string, AudioEntry>();
         private readonly Dictionary<string, AudioEntry> _sfxClips = new Dictionary<string, AudioEntry>();
@@ -202,6 +207,11 @@ namespace SignalAudioManagerUnity.Core
                 _activeInstances[config.InstanceID] = pooledSource;
             }
 
+            if (config.TriggerDucking)
+            {
+                TriggerDucking(config.DuckingDuration);
+            }
+
             if (config.TargetTransform != null)
             {
                 pooledSource.transform.SetParent(config.TargetTransform);
@@ -217,11 +227,11 @@ namespace SignalAudioManagerUnity.Core
 
             if (config.Delay > 0f)
             {
-                StartCoroutine(PlayPooledDelayed(pooledSource, clipToPlay, finalVolume, finalPitch, config.Loop, false, config.Delay));
+                StartCoroutine(PlayPooledDelayed(pooledSource, clipToPlay, finalVolume, finalPitch, config.Loop, false, config.Delay, entry));
             }
             else
             {
-                pooledSource.Play(clipToPlay, finalVolume, finalPitch, config.Loop, false);
+                pooledSource.Play(clipToPlay, finalVolume, finalPitch, config.Loop, false, entry);
             }
         }
 
@@ -246,24 +256,29 @@ namespace SignalAudioManagerUnity.Core
                 _activeInstances[config.InstanceID] = pooledSource;
             }
             
+            if (config.TriggerDucking)
+            {
+                TriggerDucking(config.DuckingDuration);
+            }
+            
             pooledSource.transform.SetParent(_audioHost.transform);
 
             if (config.Delay > 0f)
             {
-                StartCoroutine(PlayPooledDelayed(pooledSource, clipToPlay, finalVolume, finalPitch, false, true, config.Delay));
+                StartCoroutine(PlayPooledDelayed(pooledSource, clipToPlay, finalVolume, finalPitch, false, true, config.Delay, entry));
             }
             else
             {
-                pooledSource.Play(clipToPlay, finalVolume, finalPitch, false, true);
+                pooledSource.Play(clipToPlay, finalVolume, finalPitch, false, true, entry);
             }
         }
 
-        private IEnumerator PlayPooledDelayed(PooledAudioSource source, AudioClip clip, float vol, float pitch, bool loop, bool isUI, float delay)
+        private IEnumerator PlayPooledDelayed(PooledAudioSource source, AudioClip clip, float vol, float pitch, bool loop, bool isUI, float delay, AudioEntry entry)
         {
             yield return new WaitForSeconds(delay);
             if (source != null)
             {
-                source.Play(clip, vol, pitch, loop, isUI);
+                source.Play(clip, vol, pitch, loop, isUI, entry);
             }
         }
 
@@ -417,7 +432,11 @@ namespace SignalAudioManagerUnity.Core
         }
 
         public void SetMasterVolume(float volume) => SetVolume(_config.masterVolumeParam, volume);
-        public void SetMusicVolume(float volume) => SetVolume(_config.musicVolumeParam, volume);
+        public void SetMusicVolume(float volume) 
+        {
+            _currentMusicVolume = volume;
+            SetVolume(_config.musicVolumeParam, volume * _duckingMultiplier);
+        }
         public void SetSFXVolume(float volume) => SetVolume(_config.sfxVolumeParam, volume);
         public void SetUIVolume(float volume) => SetVolume(_config.uiVolumeParam, volume);
 
@@ -425,6 +444,44 @@ namespace SignalAudioManagerUnity.Core
         {
             _config.audioMixer.SetFloat(parameter, Mathf.Log10(volume > 0 ? volume : 0.0001f) * 20f);
             PlayerPrefs.SetFloat(parameter, volume);
+        }
+
+        // ==========================================
+        // SMART AUDIO DUCKING
+        // ==========================================
+        private void TriggerDucking(float duration)
+        {
+            if (_duckingCoroutine != null) StopCoroutine(_duckingCoroutine);
+            _duckingCoroutine = StartCoroutine(DuckingRoutine(duration));
+        }
+
+        private IEnumerator DuckingRoutine(float holdDuration)
+        {
+            float duckSpeed = 5f;
+            float targetDucking = 0.2f;
+
+            // Fade Down
+            while (_duckingMultiplier > targetDucking + 0.05f)
+            {
+                _duckingMultiplier = Mathf.Lerp(_duckingMultiplier, targetDucking, Time.deltaTime * duckSpeed);
+                SetVolume(_config.musicVolumeParam, _currentMusicVolume * _duckingMultiplier);
+                yield return null;
+            }
+
+            // Hold
+            yield return new WaitForSeconds(holdDuration);
+
+            // Fade Up
+            while (_duckingMultiplier < 0.95f)
+            {
+                _duckingMultiplier = Mathf.Lerp(_duckingMultiplier, 1f, Time.deltaTime * duckSpeed);
+                SetVolume(_config.musicVolumeParam, _currentMusicVolume * _duckingMultiplier);
+                yield return null;
+            }
+
+            _duckingMultiplier = 1f;
+            SetVolume(_config.musicVolumeParam, _currentMusicVolume * _duckingMultiplier);
+            _duckingCoroutine = null;
         }
     }
 }

@@ -40,7 +40,7 @@ namespace SignalAudioManagerUnity.Core
             }
         }
 
-        public void ChangeAmbient(AmbientTypeSO newAmbient, bool forceChange = false)
+        public void ChangeAmbient(AmbientTypeSO newAmbient, bool forceChange = false, float overrideFadeOut = -1f, float overrideFadeIn = -1f)
         {
             if (currentAmbient == newAmbient && !forceChange) return;
             if (isTransitioning) return;
@@ -49,10 +49,10 @@ namespace SignalAudioManagerUnity.Core
             {
                 StopCoroutine(_transitionCoroutine);
             }
-            _transitionCoroutine = StartCoroutine(TransitionToAmbient(newAmbient));
+            _transitionCoroutine = StartCoroutine(TransitionToAmbient(newAmbient, overrideFadeOut, overrideFadeIn));
         }
 
-        private IEnumerator TransitionToAmbient(AmbientTypeSO newAmbient)
+        private IEnumerator TransitionToAmbient(AmbientTypeSO newAmbient, float overrideFadeOut, float overrideFadeIn)
         {
             isTransitioning = true;
             _configDict.TryGetValue(currentAmbient, out AmbientSoundConfig currentConfig);
@@ -62,7 +62,8 @@ namespace SignalAudioManagerUnity.Core
             {
                 if (newConfig.audioIDs.Count > 0)
                 {
-                    Signal.PlayMusic(newConfig.audioIDs[0], newConfig.fadeInDuration);
+                    float fadeInToUse = overrideFadeIn >= 0f ? overrideFadeIn : newConfig.fadeInDuration;
+                    Signal.PlayMusic(newConfig.audioIDs[0], fadeInToUse);
                 }
             }
             else
@@ -70,8 +71,8 @@ namespace SignalAudioManagerUnity.Core
                 Signal.StopMusic();
             }
 
-            float fadeOutTime = currentConfig?.fadeOutDuration ?? 0f;
-            float fadeInTime = (newAmbient != null) ? _configDict[newAmbient].fadeInDuration : 0f;
+            float fadeOutTime = overrideFadeOut >= 0f ? overrideFadeOut : (currentConfig?.fadeOutDuration ?? 0f);
+            float fadeInTime = overrideFadeIn >= 0f ? overrideFadeIn : ((newAmbient != null) ? _configDict[newAmbient].fadeInDuration : 0f);
             yield return new WaitForSeconds(Mathf.Max(fadeOutTime, fadeInTime));
 
             isTransitioning = false;

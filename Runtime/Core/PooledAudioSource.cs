@@ -1,3 +1,4 @@
+using SignalAudioManagerUnity.Data;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -26,15 +27,33 @@ namespace SignalAudioManagerUnity.Core
             _returnToPoolAction = returnAction;
         }
 
-        public void Play(AudioClip clip, float volumeScale, float pitch = 1f, bool loop = false, bool isUISound = false)
+        public void Play(AudioClip clip, float volumeScale, float pitch = 1f, bool loop = false, bool isUISound = false, AudioEntry entry = null)
         {
             _isPaused = false;
             gameObject.SetActive(true);
             _audioSource.pitch = pitch;
             _audioSource.loop = loop;
-            _audioSource.spatialBlend = isUISound ? 0f : 1f;
             _audioSource.clip = clip;
             _audioSource.volume = volumeScale;
+
+            if (isUISound)
+            {
+                _audioSource.spatialBlend = 0f;
+            }
+            else if (entry != null)
+            {
+                _audioSource.spatialBlend = entry.spatialBlend;
+                _audioSource.dopplerLevel = entry.dopplerLevel;
+                _audioSource.spread = entry.spread;
+                _audioSource.minDistance = entry.minDistance;
+                _audioSource.maxDistance = entry.maxDistance;
+                _audioSource.rolloffMode = AudioRolloffMode.Logarithmic;
+            }
+            else
+            {
+                _audioSource.spatialBlend = 1f;
+            }
+
             _audioSource.Play();
 
             if (!loop)

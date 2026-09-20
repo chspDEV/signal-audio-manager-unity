@@ -90,5 +90,9 @@ namespace SignalAudioManagerUnity.Communication
         public bool Loop { get; set; } = false;
         public float FadeDuration { get; set; } = 0f;
         public long InstanceID { get; set; } = 0;
+        
+        // Smart Ducking
+        public bool TriggerDucking { get; set; } = false;
+        public float DuckingDuration { get; set; } = 1f;
     }
 }
