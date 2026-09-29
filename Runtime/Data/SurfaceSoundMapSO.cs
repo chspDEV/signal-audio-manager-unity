@@ -22,7 +22,7 @@ namespace SignalAudioManagerUnity.Data
         public class PhysicsMaterialEntry
         {
             [Tooltip("The Physics Material to detect. Leave null to match surfaces with no material assigned.")]
-            public PhysicMaterial physicsMaterial;
+            public PhysicsMaterial physicsMaterial;
 
             [Tooltip("The Audio ID to play when the player steps on this material (must exist in the Signal Dashboard).")]
             public string audioID;
@@ -61,7 +61,7 @@ namespace SignalAudioManagerUnity.Data
         /// <summary>
         /// Returns the Audio ID for a given Physics Material. Falls back to defaultAudioID if not found.
         /// </summary>
-        public string GetAudioIDForPhysicsMaterial(PhysicMaterial material)
+        public string GetAudioIDForPhysicsMaterial(PhysicsMaterial material)
         {
             foreach (var entry in physicsMaterialMap)
             {

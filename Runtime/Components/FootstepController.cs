@@ -141,7 +141,7 @@ namespace SignalAudioManagerUnity.Components
             }
 
             // Priority 2: Physics Material on the collider
-            PhysicMaterial material = hit.collider.sharedMaterial;
+            PhysicsMaterial material = hit.collider.sharedMaterial;
             return surfaceSoundMap.GetAudioIDForPhysicsMaterial(material);
         }
 
